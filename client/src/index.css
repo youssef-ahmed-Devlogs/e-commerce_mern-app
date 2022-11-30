@@ -1,0 +1,27 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.home-page .product.card img {
+  object-fit: contain;
+  height: 300px;
+}
+
+.home-page .carousel-item img {
+  height: 500px;
+  object-fit: cover;
+}
+
+.home-page .section-head .title {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.home-page .section-head .text {
+  font-size: 14px;
+  color: rgb(137, 137, 137);
+}
+
+a {
+  color: black !important;
+}
