@@ -57,8 +57,8 @@ const schema = new mongoose.Schema({
   },
   active: {
     type: Boolean,
-    default: true,
-    select: false,
+    default: false,
+    // select: false,
   },
   address: {
     geoLocation: {
@@ -78,6 +78,8 @@ const schema = new mongoose.Schema({
     default: Date.now(),
   },
   passwordChangedAt: Date,
+  verifyEmailToken: String,
+  verifyEmailExpires: Date,
 });
 
 schema.methods.compareHashPassword = async function (pass, hashPass) {

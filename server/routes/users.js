@@ -5,9 +5,10 @@ const AuthController = require("../controllers/AuthController");
 // Auth routes
 router.post("/signup", AuthController.signup);
 router.post("/login", AuthController.login);
+router.get("/verifyEmail/:token", AuthController.verifyEmail);
 
 router.use(AuthController.auth);
-router.use(AuthController.restrictTo("admin"));
+// router.use(AuthController.restrictTo("admin"));
 
 // Admin Panel
 router.route("/").get(UserController.get).post(UserController.create);

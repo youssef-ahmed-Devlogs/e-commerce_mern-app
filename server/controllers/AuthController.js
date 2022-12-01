@@ -2,6 +2,8 @@ const catchAsync = require("../helpers/catchAsync");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
+const Email = require("../helpers/email");
+const crypto = require("crypto");
 
 const signToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
@@ -9,7 +11,47 @@ const signToken = (payload) => {
   });
 };
 
+createRandomToken = () => {
+  const token = crypto.randomBytes(32);
+  return crypto.createHash("sha256").update(token).digest("hex");
+};
+
+exports.verifyEmail = catchAsync(async (req, res, next) => {
+  const verifyEmailToken = req.params.token || "no token";
+  const user = await User.findOne({ verifyEmailToken });
+
+  if (!user) {
+    return next(new Error("This user is not exists or Invalid token"));
+  }
+
+  if (user.verifyEmailExpires.getTime() < Date.now())
+    return next(new Error("This token is expires"));
+
+  const token = signToken({ id: user._id });
+
+  user.verifyEmailToken = undefined;
+  user.verifyEmailExpires = undefined;
+  user.active = true;
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    token,
+  });
+});
+
 exports.signup = catchAsync(async (req, res, next) => {
+  /**
+   * Date.now() + (10 * 60 * 1000)
+   * 10 minutes
+   * 10 * 60 = 600 seconds
+   * 600 * 1000 = 600000 milliseconds
+   */
+
+  // create verify email link
+  const verifyEmailToken = createRandomToken();
+  const verifyEmailExpires = Date.now() + 10 * 60 * 1000;
+
   const user = await User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -18,15 +60,17 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    verifyEmailToken,
+    verifyEmailExpires,
   });
 
-  const token = signToken({ id: user._id });
+  const link = `${req.protocol}://${req.headers.host}/api/v1/users/verifyEmail/${verifyEmailToken}`;
+  await new Email(user, link).sendVerifyEmail();
 
-  user.password = undefined;
   res.status(201).json({
     status: "success",
-    token,
-    data: user,
+    message:
+      "Please check your email to verify the account. The verify token link is valid for 10 minutes!",
   });
 });
 
@@ -51,6 +95,10 @@ exports.login = catchAsync(async (req, res, next) => {
 
   if (!(await user.compareHashPassword(password, user.password))) {
     return next(new Error("Incorrect password."));
+  }
+
+  if (!user.active) {
+    return next(new Error("Please check your email to verify the account."));
   }
 
   const token = signToken({ id: user._id });
