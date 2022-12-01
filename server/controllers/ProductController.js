@@ -1,5 +1,4 @@
 const Product = require("../models/Product");
-const catchAsync = require("../helpers/catchAsync");
 const FactoryController = require("./FactoryController");
 
 exports.get = FactoryController.get(Product);

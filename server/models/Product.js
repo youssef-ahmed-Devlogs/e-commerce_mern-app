@@ -1,14 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("../helpers/slugify");
 
-const ratingSchema = new mongoose.Schema(
-  {
-    rate: Number,
-    count: Number,
-  },
-  { _id: false }
-);
-
 const schema = new mongoose.Schema({
   title: {
     type: String,
@@ -31,7 +23,18 @@ const schema = new mongoose.Schema({
     type: [String],
     required: [true, "Images field is required."],
   },
-  rating: ratingSchema,
+  rating: {
+    rate: Number,
+    count: Number,
+  },
+  createdBy: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 schema.pre(/^find/, function (next) {
