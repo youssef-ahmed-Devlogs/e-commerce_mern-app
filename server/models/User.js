@@ -77,6 +77,12 @@ const schema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  accessTokens: [
+    {
+      val: String,
+      iat: Date,
+    },
+  ],
   passwordChangedAt: Date,
   verifyEmailToken: String,
   verifyEmailExpires: Date,

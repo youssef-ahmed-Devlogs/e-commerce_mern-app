@@ -8,6 +8,9 @@ router.post("/login", AuthController.login);
 router.get("/verifyEmail/:token", AuthController.verifyEmail);
 
 router.use(AuthController.auth);
+
+router.post("/logout", AuthController.logout);
+
 // router.use(AuthController.restrictTo("admin"));
 
 // Admin Panel

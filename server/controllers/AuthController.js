@@ -2,7 +2,7 @@ const catchAsync = require("../helpers/catchAsync");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
-const Email = require("../helpers/email");
+const Email = require("../helpers/Email");
 const crypto = require("crypto");
 
 const signToken = (payload) => {
@@ -11,7 +11,18 @@ const signToken = (payload) => {
   });
 };
 
-createRandomToken = () => {
+// Get old access tokens and check if expires
+const checkAccessTokensExpires = (user) => {
+  return (
+    user.accessTokens.filter((t) => {
+      const timeDiff =
+        parseInt(Date.now() / 1000, 10) - parseInt(t.iat.getTime() / 1000, 10); // milliseconds / 1000 = seconds
+      if (timeDiff < 172800) return t; // 172800 is 2 days in seconds 2d * 24h * 60m * 60s = 172800s
+    }) || []
+  );
+};
+
+const createRandomToken = () => {
   const token = crypto.randomBytes(32);
   return crypto.createHash("sha256").update(token).digest("hex");
 };
@@ -28,6 +39,8 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
     return next(new Error("This token is expires"));
 
   const token = signToken({ id: user._id });
+
+  // Send welcome email
 
   user.verifyEmailToken = undefined;
   user.verifyEmailExpires = undefined;
@@ -103,6 +116,20 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const token = signToken({ id: user._id });
 
+  // Get old access tokens and check if expires
+  let oldAccessTokens = checkAccessTokensExpires(user);
+
+  // Prepare add new access token and old
+  const accessTokens = [
+    ...oldAccessTokens,
+    {
+      val: token,
+      iat: Date.now(),
+    },
+  ];
+
+  await User.findByIdAndUpdate(user._id, { accessTokens });
+
   user.password = undefined;
   res.status(201).json({
     status: "success",
@@ -110,6 +137,30 @@ exports.login = catchAsync(async (req, res, next) => {
     data: user,
   });
 });
+
+exports.logout = catchAsync(async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) return next(new Error("You are not logged in."));
+
+  const newTokens = req.user.accessTokens.filter((t) => t.val != token);
+  await User.findByIdAndUpdate(req.user._id, { accessTokens: newTokens });
+
+  res.status(201).json({
+    status: "success",
+    message: "You are logged out successfully.",
+  });
+});
+
+// forgot password => email
+// reset password => reset link with token
 
 exports.auth = catchAsync(async (req, res, next) => {
   let token;
@@ -141,6 +192,15 @@ exports.auth = catchAsync(async (req, res, next) => {
       new Error("User recently changed password! Please login again.")
     );
   }
+
+  // Get old access tokens and check if expires
+  let oldAccessTokens = checkAccessTokensExpires(user);
+  await User.findByIdAndUpdate(user._id, { accessTokens: oldAccessTokens });
+
+  // Check if current token in authorization header is in user access tokens in database
+  const checkTokens = oldAccessTokens.filter((t) => t.val == token);
+
+  if (!checkTokens.length) return next(new Error("You are not logged in."));
 
   req.user = user;
   next();
