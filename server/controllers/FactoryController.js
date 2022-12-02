@@ -151,7 +151,29 @@ exports.update = (Model) =>
 
 exports.delete = (Model) =>
   catchAsync(async (req, res, next) => {
-    await Model.findOneAndDelete(req.params.id);
+    const data = await Model.findById(req.params.id);
+    await data.delete();
+
+    // Delete the resource image after deleted the main resource
+    const path = `public/storage/${Model.collection.collectionName}`;
+    if (
+      Model.collection.collectionName == "users" &&
+      !data.photo.startsWith("default")
+    ) {
+      if (fs.existsSync(`${path}/${data.photo}`)) {
+        fs.unlinkSync(`${path}/${data.photo}`);
+      }
+    }
+
+    if (
+      Model.collection.collectionName == "categories" &&
+      !data.cover.startsWith("default")
+    ) {
+      if (fs.existsSync(`${path}/${data.cover}`)) {
+        fs.unlinkSync(`${path}/${data.cover}`);
+      }
+    }
+
     res.status(204).json({
       status: "success",
       data: null,
