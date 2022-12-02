@@ -3,7 +3,7 @@ const ProductController = require("../controllers/ProductController");
 const AuthController = require("../controllers/AuthController");
 
 router.use(AuthController.auth);
-router.use(AuthController.restrictTo("admin"));
+// router.use(AuthController.restrictTo("admin"));
 
 router.route("/").get(ProductController.get).post(ProductController.create);
 router

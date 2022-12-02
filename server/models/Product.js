@@ -41,6 +41,9 @@ schema.pre(/^find/, function (next) {
   this.populate({
     path: "categories",
     select: "title -_id",
+  }).populate({
+    path: "createdBy",
+    select: "username -_id",
   });
   next();
 });

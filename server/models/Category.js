@@ -9,6 +9,10 @@ const schema = new mongoose.Schema({
   },
   description: String,
   slug: String,
+  cover: {
+    type: String,
+    default: "default.jpg",
+  },
   createdBy: {
     type: mongoose.Types.ObjectId,
     ref: "User",
@@ -21,6 +25,14 @@ const schema = new mongoose.Schema({
 
 schema.pre("save", function (next) {
   this.slug = slugify(this.title);
+  next();
+});
+
+schema.pre(/^find/, function (next) {
+  this.populate({
+    path: "createdBy",
+    select: "username -_id",
+  });
   next();
 });
 

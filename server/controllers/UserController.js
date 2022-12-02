@@ -2,7 +2,7 @@ const catchAsync = require("../helpers/catchAsync");
 const User = require("../models/User");
 const FactoryController = require("./FactoryController");
 const multer = require("multer");
-const sharp = require("sharp");
+const resizeImage = require("../helpers/resizeImage");
 const fs = require("fs");
 
 exports.get = FactoryController.get(User);
@@ -26,39 +26,42 @@ const upload = multer({
 });
 
 exports.uploadPhoto = upload.single("photo");
-exports.resizePhoto = catchAsync(async (req, res, next) => {
-  if (!req.file) return next();
-
-  req.file.filename = `user-${req.user._id}-${Date.now()}.jpeg`;
-
-  await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
-    .toFile(`public/storage/users/${req.file.filename}`);
-
-  // Delete old photo
-  const path = `public/storage/users/${req.user.photo}`;
-  fs.unlink(path, (err) => {
-    if (err) {
-      throw err;
-    }
-  });
-
-  next();
-});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+  // check when user upload image and set req.body.photo
+  if (req.file) {
+    req.body.photo = `users-${req.user._id}-${Date.now()}.jpeg`;
+  }
+
   req.body.password = undefined;
   req.body.passwordConfirm = undefined;
 
-  // If there's an image file
-  if (req.file && req.file.filename) req.body.photo = req.file.filename;
-
   const user = await User.findByIdAndUpdate(req.user._id, req.body, {
-    new: true,
     runValidators: true,
   });
+
+  // check when user upload image
+  if (req.file) {
+    const path = `public/storage/users`;
+
+    if (
+      !user.photo.startsWith("default") &&
+      fs.existsSync(`${path}/${user.photo}`)
+    ) {
+      // delete the old image
+      fs.unlinkSync(`${path}/${user.photo}`);
+    }
+
+    // resize the photo
+    const resized = resizeImage(req, {
+      width: 500,
+      height: 500,
+      quality: 90,
+    });
+
+    // upload the photo after resized it
+    await resized.toFile(`${path}/${req.body.photo}`);
+  }
 
   res.status(200).json({
     status: "success",

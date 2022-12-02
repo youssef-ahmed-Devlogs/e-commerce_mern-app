@@ -3,13 +3,16 @@ const CategoryController = require("../controllers/CategoryController");
 const AuthController = require("../controllers/AuthController");
 
 router.use(AuthController.auth);
-router.use(AuthController.restrictTo("admin"));
+// router.use(AuthController.restrictTo("admin"));
 
-router.route("/").get(CategoryController.get).post(CategoryController.create);
+router
+  .route("/")
+  .get(CategoryController.get)
+  .post(CategoryController.uploadCover, CategoryController.create);
 router
   .route("/:id")
   .get(CategoryController.getOne)
-  .patch(CategoryController.update)
+  .patch(CategoryController.uploadCover, CategoryController.update)
   .delete(CategoryController.delete);
 
 module.exports = router;

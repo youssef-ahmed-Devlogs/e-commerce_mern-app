@@ -14,22 +14,20 @@ router.use(AuthController.auth);
 router.post("/logout", AuthController.logout);
 router.post("/terminateSession", AuthController.terminateSession);
 
-router.patch(
-  "/updateMe",
-  UserController.uploadPhoto,
-  UserController.resizePhoto,
-  UserController.updateMe
-);
+router.patch("/updateMe", UserController.uploadPhoto, UserController.updateMe);
 router.patch("/updateMyPassword", UserController.updateMyPassword);
 
 // router.use(AuthController.restrictTo("admin"));
 
 // Admin Panel
-router.route("/").get(UserController.get).post(UserController.create);
+router
+  .route("/")
+  .get(UserController.get)
+  .post(UserController.uploadPhoto, UserController.create);
 router
   .route("/:id")
   .get(UserController.getOne)
-  .patch(UserController.update)
+  .patch(UserController.uploadPhoto, UserController.update)
   .delete(UserController.delete);
 router.patch("/:id/updatePassword", UserController.updatePassword);
 
