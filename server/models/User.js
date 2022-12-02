@@ -83,6 +83,8 @@ const schema = new mongoose.Schema({
       iat: Date,
     },
   ],
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   passwordChangedAt: Date,
   verifyEmailToken: String,
   verifyEmailExpires: Date,

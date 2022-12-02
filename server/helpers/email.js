@@ -44,6 +44,14 @@ class Email {
   sendVerifyEmail = async () => {
     await this.send("Verify your account", "verifyEmail");
   };
+
+  sendWelcomeEmail = async () => {
+    await this.send("Welcome to MeStore", "welcome");
+  };
+
+  sendResetPasswordEmail = async () => {
+    await this.send("Reset your password", "passwordReset");
+  };
 }
 
 module.exports = Email;

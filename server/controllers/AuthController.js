@@ -40,12 +40,13 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
 
   const token = signToken({ id: user._id });
 
-  // Send welcome email
-
   user.verifyEmailToken = undefined;
   user.verifyEmailExpires = undefined;
   user.active = true;
   await user.save();
+
+  // Send welcome email
+  new Email(user, "http://localhost:8000").sendWelcomeEmail();
 
   res.status(200).json({
     status: "success",
@@ -61,7 +62,7 @@ exports.signup = catchAsync(async (req, res, next) => {
    * 600 * 1000 = 600000 milliseconds
    */
 
-  // create verify email link
+  // create verify email token
   const verifyEmailToken = createRandomToken();
   const verifyEmailExpires = Date.now() + 10 * 60 * 1000;
 
@@ -153,14 +154,86 @@ exports.logout = catchAsync(async (req, res, next) => {
   const newTokens = req.user.accessTokens.filter((t) => t.val != token);
   await User.findByIdAndUpdate(req.user._id, { accessTokens: newTokens });
 
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     message: "You are logged out successfully.",
   });
 });
 
+// Logout from other devices
+exports.terminateSession = catchAsync(async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) return next(new Error("You are not logged in."));
+
+  const newTokens = req.user.accessTokens.filter((t) => t.val == token);
+  await User.findByIdAndUpdate(req.user._id, { accessTokens: newTokens });
+
+  res.status(200).json({
+    status: "success",
+    message: "You are logged out successfully from all other devices.",
+  });
+});
+
 // forgot password => email
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  if (!req.body.email) return next(new Error("Please provide your email."));
+
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) return next(new Error("This account is not registered."));
+
+  // create reset password token
+  const resetPasswordToken = createRandomToken();
+  const resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+
+  user.resetPasswordToken = resetPasswordToken;
+  user.resetPasswordExpires = resetPasswordExpires;
+  await user.save();
+
+  const link = `${req.protocol}://${req.headers.host}/api/v1/users/resetPassword/${resetPasswordToken}`;
+  await new Email(user, link).sendResetPasswordEmail();
+
+  res.status(200).json({
+    status: "success",
+    message:
+      "Please check your email to reset your password. The reset token link is valid for 10 minutes!",
+  });
+});
+
 // reset password => reset link with token
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const { password, passwordConfirm } = req.body;
+
+  if (!password || !passwordConfirm)
+    return next(new Error("Please provide new password."));
+
+  const user = await User.findOne({ resetPasswordToken: req.params.token });
+  if (!user) return next(new Error("Something went wrong."));
+
+  if (user.resetPasswordExpires.getTime() < Date.now())
+    return next(new Error("This token is expires"));
+
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  // logout from all other devices
+  user.accessTokens = undefined;
+
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    message: "Password changed successfully.",
+  });
+});
 
 exports.auth = catchAsync(async (req, res, next) => {
   let token;
