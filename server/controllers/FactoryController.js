@@ -38,6 +38,19 @@ exports.create = (Model) =>
       }
     }
 
+    // check when user upload images and set req.body.images[]
+    if (req.files && req.files.length) {
+      req.body.images = [];
+
+      req.files.forEach((file, i) => {
+        req.body.images.push(
+          `${Model.collection.collectionName}-${
+            req.user._id
+          }-${Date.now()}-${i}.jpeg`
+        );
+      });
+    }
+
     // Set who created this document
     req.body.createdBy = req.user._id;
 
@@ -49,7 +62,7 @@ exports.create = (Model) =>
       const path = `public/storage/${Model.collection.collectionName}`;
 
       if (Model.collection.collectionName == "users") {
-        const resized = resizeImage(req, {
+        const resized = resizeImage(req.file.buffer, {
           width: 500,
           height: 500,
           quality: 90,
@@ -58,13 +71,29 @@ exports.create = (Model) =>
       }
 
       if (Model.collection.collectionName == "categories") {
-        const resized = resizeImage(req, {
+        const resized = resizeImage(req.file.buffer, {
           width: 1000,
           height: 1000,
           quality: 90,
         });
         await resized.toFile(`${path}/${req.body.cover}`);
       }
+    }
+
+    // check when user upload images and upload them
+    if (req.files && req.files.length) {
+      const path = `public/storage/${Model.collection.collectionName}`;
+
+      const arrayOfPromises = req.files.map(async (file, i) => {
+        const resized = resizeImage(file.buffer, {
+          width: 1000,
+          height: 1000,
+          quality: 90,
+        });
+        await resized.toFile(`${path}/${req.body.images[i]}`);
+      });
+
+      await Promise.all(arrayOfPromises);
     }
 
     res.status(201).json({
@@ -88,6 +117,19 @@ exports.update = (Model) =>
       if (Model.collection.collectionName == "categories") {
         req.body.cover = filename;
       }
+    }
+
+    // check when user upload images and set req.body.images[]
+    if (req.files && req.files.length) {
+      req.body.images = [];
+
+      req.files.forEach((file, i) => {
+        req.body.images.push(
+          `${Model.collection.collectionName}-${
+            req.user._id
+          }-${Date.now()}-${i}.jpeg`
+        );
+      });
     }
 
     req.body.password = undefined;
@@ -118,14 +160,11 @@ exports.update = (Model) =>
           fs.unlinkSync(`${path}/${data.cover}`);
         }
       }
-    }
 
-    // check when user upload image and upload it
-    if (req.file) {
-      const path = `public/storage/${Model.collection.collectionName}`;
+      // check when user upload image and upload it
 
       if (Model.collection.collectionName == "users") {
-        const resized = resizeImage(req, {
+        const resized = resizeImage(req.file.buffer, {
           width: 500,
           height: 500,
           quality: 90,
@@ -134,13 +173,37 @@ exports.update = (Model) =>
       }
 
       if (Model.collection.collectionName == "categories") {
-        const resized = resizeImage(req, {
+        const resized = resizeImage(req.file.buffer, {
           width: 1000,
           height: 1000,
           quality: 90,
         });
         await resized.toFile(`${path}/${req.body.cover}`);
       }
+    }
+
+    // check when user upload images
+    if (req.files && req.files.length) {
+      const path = `public/storage/${Model.collection.collectionName}`;
+
+      // Delete the old images
+      data.images.forEach((img) => {
+        if (fs.existsSync(`${path}/${img}`)) {
+          fs.unlinkSync(`${path}/${img}`);
+        }
+      });
+
+      // upload new images
+      const arrayOfPromises = req.files.map(async (file, i) => {
+        const resized = resizeImage(file.buffer, {
+          width: 1000,
+          height: 1000,
+          quality: 90,
+        });
+        await resized.toFile(`${path}/${req.body.images[i]}`);
+      });
+
+      await Promise.all(arrayOfPromises);
     }
 
     res.status(200).json({
@@ -152,6 +215,9 @@ exports.update = (Model) =>
 exports.delete = (Model) =>
   catchAsync(async (req, res, next) => {
     const data = await Model.findById(req.params.id);
+
+    if (!data) return next(new Error("Something went wrong."));
+
     await data.delete();
 
     // Delete the resource image after deleted the main resource
@@ -172,6 +238,15 @@ exports.delete = (Model) =>
       if (fs.existsSync(`${path}/${data.cover}`)) {
         fs.unlinkSync(`${path}/${data.cover}`);
       }
+    }
+
+    // Delete the resource images after deleted the main resource
+    if (Model.collection.collectionName == "products") {
+      data.images.forEach((img) => {
+        if (fs.existsSync(`${path}/${img}`)) {
+          fs.unlinkSync(`${path}/${img}`);
+        }
+      });
     }
 
     res.status(204).json({

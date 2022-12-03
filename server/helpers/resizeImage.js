@@ -1,9 +1,9 @@
 const sharp = require("sharp");
 
-const resizeImage = (req, options) => {
+const resizeImage = (fileBuffer, options) => {
   const { width, height, quality } = options;
 
-  return sharp(req.file.buffer)
+  return sharp(fileBuffer)
     .resize(width, height)
     .toFormat("jpeg")
     .jpeg({ quality });
