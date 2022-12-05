@@ -2,92 +2,102 @@ const mongoose = require("mongoose");
 const { isEmail } = require("validator");
 const bcrypt = require("bcryptjs");
 
-const schema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: [true, "First name field is required."],
-  },
-  lastName: {
-    type: String,
-    required: [true, "Last name field is required."],
-  },
-  username: {
-    type: String,
-    required: [true, "Username field is required."],
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: [true, "Email field is required."],
-    unique: true,
-    lower: true,
-    validate: [isEmail, "Email field must be a valid email."],
-  },
-  phone: {
-    type: String,
-    required: [true, "Phone field is required."],
-    unique: true,
-  },
-  photo: {
-    type: String,
-    default: "default.jpg",
-  },
-  password: {
-    type: String,
-    required: [true, "Password field is required."],
-    minlength: 8,
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Password confirm field is required."],
-    minlength: 8,
-    select: false,
-    validate: {
-      validator: function (val) {
-        return val === this.password;
+const schema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, "First name field is required."],
+    },
+    lastName: {
+      type: String,
+      required: [true, "Last name field is required."],
+    },
+    username: {
+      type: String,
+      required: [true, "Username field is required."],
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email field is required."],
+      unique: true,
+      lower: true,
+      validate: [isEmail, "Email field must be a valid email."],
+    },
+    phone: {
+      type: String,
+      required: [true, "Phone field is required."],
+      unique: true,
+    },
+    photo: {
+      type: String,
+      default: "default.jpg",
+    },
+    password: {
+      type: String,
+      required: [true, "Password field is required."],
+      minlength: 8,
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Password confirm field is required."],
+      minlength: 8,
+      select: false,
+      validate: {
+        validator: function (val) {
+          return val === this.password;
+        },
+        message: "Passwords are not the same.",
       },
-      message: "Passwords are not the same.",
     },
-  },
-  role: {
-    type: String,
-    enum: ["admin", "user"],
-    default: "user",
-  },
-  active: {
-    type: Boolean,
-    default: false,
-    // select: false,
-  },
-  address: {
-    geoLocation: {
-      type: {
-        type: String,
-        default: "Point",
-        enum: ["Point"],
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
+    active: {
+      type: Boolean,
+      default: false,
+      // select: false,
+    },
+    address: {
+      geoLocation: {
+        type: {
+          type: String,
+          default: "Point",
+          enum: ["Point"],
+        },
+        lat: String,
+        long: String,
       },
-      lat: String,
-      long: String,
+      city: String,
+      street: String,
     },
-    city: String,
-    street: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  accessTokens: [
-    {
-      val: String,
-      iat: Date,
+    createdAt: {
+      type: Date,
+      default: Date.now(),
     },
-  ],
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
-  passwordChangedAt: Date,
-  verifyEmailToken: String,
-  verifyEmailExpires: Date,
+    accessTokens: [
+      {
+        val: String,
+        iat: Date,
+      },
+    ],
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    passwordChangedAt: Date,
+    verifyEmailToken: String,
+    verifyEmailExpires: Date,
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+
+schema.virtual("fullName").get(function () {
+  return (this.name = `${this.firstName} ${this.lastName}`);
 });
 
 schema.methods.compareHashPassword = async function (pass, hashPass) {

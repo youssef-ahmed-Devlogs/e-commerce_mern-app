@@ -1,13 +1,21 @@
 const catchAsync = require("../helpers/catchAsync");
 const resizeImage = require("../helpers/resizeImage");
 const fs = require("fs");
+const ApiHandle = require("../helpers/ApiHandle");
 
 exports.get = (Model) =>
   catchAsync(async (req, res, next) => {
-    const data = await Model.find();
+    const handle = new ApiHandle(Model.find(), req.query)
+      .filter()
+      .sort()
+      .selectFields()
+      .paginate();
+    const data = await handle.query;
+
     res.status(200).json({
       status: "success",
       results: data.length,
+      page: req.query.page * 1 || 1,
       data,
     });
   });
