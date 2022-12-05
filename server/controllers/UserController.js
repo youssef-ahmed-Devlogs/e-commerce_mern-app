@@ -94,32 +94,3 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     data: user,
   });
 });
-
-exports.getFavorites = catchAsync(async (req, res, next) => {
-  const apiHandle = new ApiHandle(
-    Favorite.find({ user: req.user._id }),
-    req.query
-  )
-    .sort()
-    .paginate();
-  const favorites = await apiHandle.query;
-  res.status(200).json({
-    status: "success",
-    results: favorites.length,
-    page: req.query.page * 1 || 1,
-    data: favorites,
-  });
-});
-
-exports.addToFavorite = catchAsync(async (req, res, next) => {
-  const productId = req.body.product;
-  const product = await Favorite.create({
-    product: productId,
-    user: req.user._id,
-  });
-
-  res.status(201).json({
-    status: "success",
-    data: product,
-  });
-});

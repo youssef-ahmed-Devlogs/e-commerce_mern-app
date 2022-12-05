@@ -16,10 +16,6 @@ router.post("/terminateSession", AuthController.terminateSession);
 
 router.patch("/updateMe", UserController.uploadPhoto, UserController.updateMe);
 router.patch("/updateMyPassword", UserController.updateMyPassword);
-router
-  .route("/favorite")
-  .get(UserController.getFavorites)
-  .post(UserController.addToFavorite);
 
 // router.use(AuthController.restrictTo("admin"));
 
