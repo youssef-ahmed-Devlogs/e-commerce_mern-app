@@ -30,7 +30,7 @@ schema.pre(/^find/, function (next) {
     select: "username",
   }).populate({
     path: "product",
-    select: "title price",
+    select: "title description price",
   });
   next();
 });
