@@ -5,6 +5,7 @@ const dotnet = require("dotenv");
 const productsRoutes = require("./routes/products");
 const categoriesRoutes = require("./routes/categories");
 const usersRoutes = require("./routes/users");
+const reviewsRoutes = require("./routes/reviews");
 
 app.use(express.json({ limit: "10kb" }));
 dotnet.config({ path: "./config.env" });
@@ -14,6 +15,7 @@ if (process.env.NODE_ENV == "development") app.use(morgan("dev"));
 app.use("/api/v1/users", usersRoutes);
 app.use("/api/v1/products", productsRoutes);
 app.use("/api/v1/categories", categoriesRoutes);
+app.use("/api/v1/reviews", reviewsRoutes);
 
 app.use("*", (req, res, next) => {
   res.status(404).json({

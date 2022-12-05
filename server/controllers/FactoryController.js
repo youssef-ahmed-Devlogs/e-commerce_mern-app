@@ -5,7 +5,21 @@ const ApiHandle = require("../helpers/ApiHandle");
 
 exports.get = (Model) =>
   catchAsync(async (req, res, next) => {
-    const handle = new ApiHandle(Model.find(), req.query)
+    // ============== Nested routes =================
+    // from reviews routes
+    let filterReviewsInProduct = {};
+    if (req.params.productId)
+      filterReviewsInProduct = { product: req.params.productId };
+
+    // from products routes
+    let filterProductsInCategory = {};
+    if (req.params.categoryId)
+      filterProductsInCategory = { categories: req.params.categoryId };
+
+    const handle = new ApiHandle(
+      Model.find({ ...filterReviewsInProduct, ...filterProductsInCategory }),
+      req.query
+    )
       .filter()
       .sort()
       .selectFields()

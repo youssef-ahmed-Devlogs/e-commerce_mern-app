@@ -1,9 +1,12 @@
-const router = require("express").Router();
+const router = require("express").Router({ mergeParams: true });
 const ProductController = require("../controllers/ProductController");
 const AuthController = require("../controllers/AuthController");
+const reviewsRoutes = require("../routes/reviews");
 
 router.use(AuthController.auth);
 // router.use(AuthController.restrictTo("admin"));
+
+router.use("/:productId/reviews", reviewsRoutes);
 
 router
   .route("/")
