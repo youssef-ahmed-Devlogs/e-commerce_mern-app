@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const { isEmail } = require("validator");
 const bcrypt = require("bcryptjs");
+const Review = require("./Review");
+const Favorite = require("./Favorite");
 
 const schema = new mongoose.Schema(
   {
@@ -124,6 +126,13 @@ schema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
   this.passwordChangedAt = Date.now() - 1000;
   next();
+});
+
+schema.post("remove", async function (doc) {
+  await Review.remove({ createdBy: { $in: doc._id } });
+  await Favorite.remove({ user: { $in: doc._id } });
+  // remove cart
+  // remove orders
 });
 
 const User = mongoose.model("User", schema);

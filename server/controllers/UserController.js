@@ -4,6 +4,8 @@ const FactoryController = require("./FactoryController");
 const multer = require("multer");
 const resizeImage = require("../helpers/resizeImage");
 const fs = require("fs");
+const Favorite = require("../models/Favorite");
+const ApiHandle = require("../helpers/ApiHandle");
 
 exports.get = FactoryController.get(User);
 exports.getOne = FactoryController.getOne(User);
@@ -90,5 +92,34 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: user,
+  });
+});
+
+exports.getFavorites = catchAsync(async (req, res, next) => {
+  const apiHandle = new ApiHandle(
+    Favorite.find({ user: req.user._id }),
+    req.query
+  )
+    .sort()
+    .paginate();
+  const favorites = await apiHandle.query;
+  res.status(200).json({
+    status: "success",
+    results: favorites.length,
+    page: req.query.page * 1 || 1,
+    data: favorites,
+  });
+});
+
+exports.addToFavorite = catchAsync(async (req, res, next) => {
+  const productId = req.body.product;
+  const product = await Favorite.create({
+    product: productId,
+    user: req.user._id,
+  });
+
+  res.status(201).json({
+    status: "success",
+    data: product,
   });
 });
