@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const Review = require("./Review");
 const Favorite = require("./Favorite");
 const Cart = require("./Cart");
+const Order = require("./Order");
 
 const schema = new mongoose.Schema(
   {
@@ -133,7 +134,7 @@ schema.post("remove", async function (doc) {
   await Review.remove({ createdBy: { $in: doc._id } });
   await Favorite.remove({ user: { $in: doc._id } });
   await Cart.remove({ user: { $in: doc._id } });
-  // remove orders
+  await Order.remove({ user: { $in: doc._id } });
 });
 
 const User = mongoose.model("User", schema);

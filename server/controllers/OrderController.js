@@ -1,6 +1,34 @@
 const catchAsync = require("../helpers/catchAsync");
+const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Stripe = require("stripe");
+const FactoryController = require("./FactoryController");
+
+exports.get = FactoryController.get(Order);
+exports.getOne = FactoryController.getOne(Order);
+exports.create = FactoryController.create(Order);
+exports.update = FactoryController.update(Order);
+exports.delete = FactoryController.delete(Order);
+
+exports.getMyOrders = catchAsync(async (req, res, next) => {
+  const orders = await Order.find({ user: req.user._id });
+
+  res.status(200).json({
+    status: "success",
+    results: orders.length,
+    page: req.query.page * 1 || 1,
+    data: orders,
+  });
+});
+
+exports.getOneFromMyOrders = catchAsync(async (req, res, next) => {
+  const order = await Order.findById(req.params.orderId);
+
+  res.status(200).json({
+    status: "success",
+    data: order,
+  });
+});
 
 exports.createCheckoutSession = catchAsync(async (req, res, next) => {
   const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
