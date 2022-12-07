@@ -9,6 +9,7 @@ const reviewsRoutes = require("./routes/reviews");
 const favoritesRoutes = require("./routes/favorites");
 const cartsRoutes = require("./routes/carts");
 const ordersRoutes = require("./routes/orders");
+const sliderRoutes = require("./routes/slider");
 
 app.use(express.json({ limit: "10kb" }));
 dotnet.config({ path: "./config.env" });
@@ -22,6 +23,7 @@ app.use("/api/v1/reviews", reviewsRoutes);
 app.use("/api/v1/favorite", favoritesRoutes);
 app.use("/api/v1/cart", cartsRoutes);
 app.use("/api/v1/orders", ordersRoutes);
+app.use("/api/v1/slider", sliderRoutes);
 
 app.use("*", (req, res, next) => {
   res.status(404).json({

@@ -58,6 +58,10 @@ exports.create = (Model) =>
       if (Model.collection.collectionName == "categories") {
         req.body.cover = filename;
       }
+
+      if (Model.collection.collectionName == "sliders") {
+        req.body.image = filename;
+      }
     }
 
     // check when user upload images and set req.body.images[]
@@ -100,6 +104,15 @@ exports.create = (Model) =>
         });
         await resized.toFile(`${path}/${req.body.cover}`);
       }
+
+      if (Model.collection.collectionName == "sliders") {
+        const resized = resizeImage(req.file.buffer, {
+          width: 1920,
+          height: 1080,
+          quality: 90,
+        });
+        await resized.toFile(`${path}/${req.body.image}`);
+      }
     }
 
     // check when user upload images and upload them
@@ -139,6 +152,10 @@ exports.update = (Model) =>
       if (Model.collection.collectionName == "categories") {
         req.body.cover = filename;
       }
+
+      if (Model.collection.collectionName == "sliders") {
+        req.body.image = filename;
+      }
     }
 
     // check when user upload images and set req.body.images[]
@@ -160,6 +177,10 @@ exports.update = (Model) =>
     const data = await Model.findByIdAndUpdate(req.params.id, req.body, {
       runValidators: true,
     });
+
+    if (!data) {
+      return next(new Error("This collection is not exist."));
+    }
 
     // check when user upload image and delete the old image
     if (req.file) {
@@ -183,6 +204,15 @@ exports.update = (Model) =>
         }
       }
 
+      if (
+        Model.collection.collectionName == "sliders" &&
+        !data.image.startsWith("default")
+      ) {
+        if (fs.existsSync(`${path}/${data.image}`)) {
+          fs.unlinkSync(`${path}/${data.image}`);
+        }
+      }
+
       // check when user upload image and upload it
 
       if (Model.collection.collectionName == "users") {
@@ -201,6 +231,15 @@ exports.update = (Model) =>
           quality: 90,
         });
         await resized.toFile(`${path}/${req.body.cover}`);
+      }
+
+      if (Model.collection.collectionName == "sliders") {
+        const resized = resizeImage(req.file.buffer, {
+          width: 1920,
+          height: 1080,
+          quality: 90,
+        });
+        await resized.toFile(`${path}/${req.body.image}`);
       }
     }
 
