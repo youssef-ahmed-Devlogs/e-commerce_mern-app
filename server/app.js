@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const dotnet = require("dotenv");
+const cors = require("cors");
 const productsRoutes = require("./routes/products");
 const categoriesRoutes = require("./routes/categories");
 const usersRoutes = require("./routes/users");
@@ -10,6 +11,10 @@ const favoritesRoutes = require("./routes/favorites");
 const cartsRoutes = require("./routes/carts");
 const ordersRoutes = require("./routes/orders");
 const sliderRoutes = require("./routes/slider");
+const ErrorController = require("./controllers/ErrorController");
+
+app.use(cors());
+app.options("*", cors());
 
 app.use(express.json({ limit: "10kb" }));
 dotnet.config({ path: "./config.env" });
@@ -32,17 +37,6 @@ app.use("*", (req, res, next) => {
   });
 });
 
-app.use((err, req, res, next) => {
-  res.status(400).json({
-    status: "fail",
-    message: err.message,
-    error: err,
-    stack: err.stack,
-  });
-});
-
-app.get("/", (req, res) => {
-  res.end("222");
-});
+app.use(ErrorController);
 
 module.exports = app;
