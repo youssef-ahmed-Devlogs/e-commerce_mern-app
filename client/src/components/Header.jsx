@@ -1,51 +1,42 @@
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import { Link } from "react-router-dom";
+const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
+  // Sidebar settings
+  const toggleSidebar = () => {
+    setSidebarIsOpen(!sidebarIsOpen);
+    localStorage.setItem("sidebarIsOpen", !sidebarIsOpen);
 
-const Header = (props) => {
+    if (sidebarIsOpen) {
+      document.querySelector("body").classList.remove("sidebar-open");
+    } else {
+      document.querySelector("body").classList.add("sidebar-open");
+    }
+  };
+
   return (
-    <Navbar bg="light" expand="lg">
-      <Container>
-        <Link to="/" className="navbar-brand">
-          MeStore
-        </Link>
+    <header className={sidebarIsOpen ? "sidebar-open" : ""}>
+      <div className="sidebar-button" onClick={toggleSidebar}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
 
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Link to="/" className="nav-link">
-              Home
-            </Link>
-            <Link to="/categories" className="nav-link">
-              Categories
-            </Link>
-          </Nav>
-          <Nav className="ms-auto">
-            <Link to="/cart" className="nav-link">
-              Cart 0
-            </Link>
-            <NavDropdown title="Account" id="basic-nav-dropdown">
-              <Link to="/my-account" className="dropdown-item">
-                My Account
-              </Link>
-              <Link to="/blog" className="dropdown-item">
-                Blog
-              </Link>
-              <Link to="/about" className="dropdown-item">
-                About
-              </Link>
-              <NavDropdown.Divider />
+      <div className="right-area d-flex align-items-center gap-2">
+        {/* Settings */}
+        <a href="#" className="settings-button">
+          <i className="fas fa-cog"></i>
+        </a>
 
-              <Link to="/logout" className="dropdown-item">
-                Logout
-              </Link>
-            </NavDropdown>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+        {/* Profile Area */}
+        <a href="#" className="profile-area d-flex align-items-center gap-2">
+          <div className="username">Youssef Ahmed</div>
+          <div className="photo">
+            <img
+              src="https://scontent.fcai19-4.fna.fbcdn.net/v/t39.30808-6/300379318_611769147160937_8224297053076357217_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeF9vk_mh_uJtw6y1U40YaoKScGwwD6mDl9JwbDAPqYOXz7dZnz9UIqxYPB07h73b8X00h1xPIO2Wg_I2_qdXikd&_nc_ohc=QbTOJgiVAdIAX_1IXwk&_nc_ht=scontent.fcai19-4.fna&oh=00_AfCosvet3N7uNgljKVhUVzefzNlhoUc0it35r4X2NSOdgg&oe=639680F5"
+              alt="username"
+            />
+          </div>
+        </a>
+      </div>
+    </header>
   );
 };
 
