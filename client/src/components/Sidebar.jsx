@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 const Sidebar = ({ sidebarIsOpen }) => {
   return (
     <aside className={`sidebar ${sidebarIsOpen ? "sidebar-open" : ""}`}>
@@ -6,34 +8,59 @@ const Sidebar = ({ sidebarIsOpen }) => {
       </a>
 
       <nav>
-        <a href="#" className="nav-link d-flex align-items-center gap-2">
+        <NavLink to="/" className="nav-link d-flex align-items-center gap-2">
+          <i className="fas fa-tachometer-alt"></i>
+          Dashboard
+        </NavLink>
+        <NavLink
+          to="/users"
+          className="nav-link d-flex align-items-center gap-2"
+        >
           <i className="fas fa-users"></i>
           Users
-        </a>
-        <a href="#" className="nav-link d-flex align-items-center gap-2">
+        </NavLink>
+        <NavLink
+          to="/products"
+          className="nav-link d-flex align-items-center gap-2"
+        >
           <i className="fas fa-box-open"></i>
           Products
-        </a>
-        <a href="#" className="nav-link d-flex align-items-center gap-2">
+        </NavLink>
+        <NavLink
+          to="/categories"
+          className="nav-link d-flex align-items-center gap-2"
+        >
           <i className="fas fa-sitemap"></i>
           Categories
-        </a>
-        <a href="#" className="nav-link d-flex align-items-center gap-2">
+        </NavLink>
+        <NavLink
+          to="/reviews"
+          className="nav-link d-flex align-items-center gap-2"
+        >
           <i className="fas fa-star"></i>
           Reviews
-        </a>
-        <a href="#" className="nav-link d-flex align-items-center gap-2">
+        </NavLink>
+        <NavLink
+          to="/orders"
+          className="nav-link d-flex align-items-center gap-2"
+        >
           <i className="fas fa-truck-moving"></i>
           Orders
-        </a>
-        <a href="#" className="nav-link d-flex align-items-center gap-2">
+        </NavLink>
+        <NavLink
+          to="/settings"
+          className="nav-link d-flex align-items-center gap-2"
+        >
           <i className="fas fa-cog"></i>
           Settings
-        </a>
-        <a href="#" className="nav-link d-flex align-items-center gap-2">
+        </NavLink>
+        <NavLink
+          to="/logout"
+          className="nav-link d-flex align-items-center gap-2"
+        >
           <i className="fas fa-door-open"></i>
           Logout
-        </a>
+        </NavLink>
       </nav>
     </aside>
   );

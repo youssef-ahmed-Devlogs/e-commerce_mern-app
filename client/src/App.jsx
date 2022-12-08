@@ -1,9 +1,13 @@
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import Home from "./pages/Home";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Dashboard from "./pages/Dashboard";
+import Users from "./pages/Users";
+import SignUp from "./pages/auth/SignUp";
+import { useLocation } from "react-router-dom";
+import Login from "./pages/auth/Login";
 
 function App() {
   // Sidebar settings
@@ -22,16 +26,60 @@ function App() {
     }
   }, []);
 
+  // Remove header and sidebar and any thing like that when we in specific pages
+  const { pathname } = useLocation();
+  const checkIfInSignupOrLogin = () => {
+    const blackList = ["signup", "login"];
+
+    return blackList.includes(pathname.split("/").join(""));
+  };
+
   return (
-    <div className="wrapper">
-      <Sidebar sidebarIsOpen={sidebarIsOpen} />
+    <div className={!checkIfInSignupOrLogin() ? "wrapper" : ""}>
+      {!checkIfInSignupOrLogin() && <Sidebar sidebarIsOpen={sidebarIsOpen} />}
+
       <main>
-        <Header
-          sidebarIsOpen={sidebarIsOpen}
-          setSidebarIsOpen={setSidebarIsOpen}
-        />
-        <Home />
-        <Footer />
+        {!checkIfInSignupOrLogin() && (
+          <Header
+            sidebarIsOpen={sidebarIsOpen}
+            setSidebarIsOpen={setSidebarIsOpen}
+          />
+        )}
+
+        <Routes>
+          {true && (
+            <>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/users" element={<Users />} />
+            </>
+          )}
+
+          <Route
+            path="/signup"
+            element={
+              false ? (
+                <SignUp sidebarIsOpen={sidebarIsOpen} />
+              ) : (
+                <Navigate replace to="/" />
+              )
+            }
+          />
+
+          <Route
+            path="/login"
+            element={
+              false ? (
+                <Login sidebarIsOpen={sidebarIsOpen} />
+              ) : (
+                <Navigate replace to="/" />
+              )
+            }
+          />
+
+          <Route path="*" element={<Navigate replace to="/login" />} />
+        </Routes>
+
+        {!checkIfInSignupOrLogin() && <Footer />}
       </main>
     </div>
   );

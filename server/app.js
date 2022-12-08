@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const path = require("path");
 const morgan = require("morgan");
 const dotnet = require("dotenv");
 const cors = require("cors");
@@ -12,6 +13,8 @@ const cartsRoutes = require("./routes/carts");
 const ordersRoutes = require("./routes/orders");
 const sliderRoutes = require("./routes/slider");
 const ErrorController = require("./controllers/ErrorController");
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors());
 app.options("*", cors());

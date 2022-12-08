@@ -60,9 +60,9 @@ const schema = new mongoose.Schema(
       enum: ["admin", "user"],
       default: "user",
     },
-    active: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: Number,
+      default: 2, // 1 Active || 2 Disabled || 3 Banned
       // select: false,
     },
     address: {

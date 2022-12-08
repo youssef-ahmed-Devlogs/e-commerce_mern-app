@@ -42,7 +42,7 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
 
   user.verifyEmailToken = undefined;
   user.verifyEmailExpires = undefined;
-  user.active = true;
+  user.status = 1;
   await user.save();
 
   // Send welcome email
@@ -111,7 +111,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new Error("Incorrect password."));
   }
 
-  if (!user.active) {
+  if (user.status != 1) {
     return next(new Error("Please check your email to verify the account."));
   }
 

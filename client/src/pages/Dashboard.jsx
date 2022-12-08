@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-const Home = (props) => {
+const Dashboard = (props) => {
   return (
-    <div className="main-content home-page">
+    <div className="main-content dashboard-page">
       <h1 className="page-head">Dashboard</h1>
     </div>
   );
 };
 
-export default Home;
+export default Dashboard;
