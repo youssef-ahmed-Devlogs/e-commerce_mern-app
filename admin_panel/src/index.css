@@ -325,7 +325,6 @@ main {
 }
 
 .main-content .card-table {
-  padding: 10px;
   background-color: var(--white-color);
   border-radius: var(--border-radius);
   border: none;
@@ -343,4 +342,59 @@ main {
 .main-content .card-table td,
 .main-content .card-table th {
   vertical-align: middle;
+}
+
+thead th {
+  cursor: pointer;
+}
+
+thead th.active {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+}
+
+.form-control {
+  border-radius: var(--border-radius);
+  background-color: var(--white-color);
+  padding: 10px;
+  font-size: var(--third-text);
+}
+
+.table-filter label {
+  font-size: var(--small-text);
+  font-weight: bold;
+  color: var(--black-color);
+}
+
+.pagination {
+  gap: 5px;
+}
+
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+  color: var(--dark-color) !important;
+}
+
+.pagination .page-item.disabled .page-link {
+  opacity: 0.7;
+}
+
+.pagination .page-item .page-link {
+  background-color: var(--white-color);
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--white-color) !important;
+}
+
+.pagination .page-item .page-link:hover {
+  background-color: var(--primary-opacity-color);
+  border-color: var(--primary-opacity-color);
+  color: var(--white-color) !important;
 }

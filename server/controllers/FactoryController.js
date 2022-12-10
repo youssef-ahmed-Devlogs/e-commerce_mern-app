@@ -24,12 +24,23 @@ exports.get = (Model) =>
       .sort()
       .selectFields()
       .paginate();
+
+    const handleTotal = new ApiHandle(
+      Model.find({ ...filterReviewsInProduct, ...filterProductsInCategory }),
+      req.query
+    )
+      .filter()
+      .sort()
+      .selectFields();
+
     const data = await handle.query;
+    const total = await handleTotal.query;
 
     res.status(200).json({
       status: "success",
       results: data.length,
       page: req.query.page * 1 || 1,
+      total: total.length,
       data,
     });
   });
