@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 const Dashboard = (props) => {
   return (
     <div className="main-content dashboard-page">

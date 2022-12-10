@@ -1,14 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { login, updateState } from "../../store/auth/actions";
 
 const Login = ({ sidebarIsOpen }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState([]);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isLoading, isSuccess, isError, message, user } = useSelector(
+    (state) => state.auth
+  );
 
   const handleChange = ({ currentTarget }) => {
     setFormData({ ...formData, [currentTarget.name]: currentTarget.value });
@@ -16,34 +22,12 @@ const Login = ({ sidebarIsOpen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validation in frontend
+    const check = true;
 
-    try {
-      const url = "http://localhost:8000/api/v1/users/login";
-      const { data } = await axios.post(url, formData);
-      localStorage.setItem("token", data.token);
-      navigate("/");
-
-      console.log(data);
-    } catch (err) {
-      if (
-        err.response &&
-        err.response.status >= 400 &&
-        err.response.status <= 500
-      ) {
-        if (err.response.data.message == "Invalid input data.") {
-          setErrors(err.response.data.validationMessages);
-        } else {
-          const validationMessages = [
-            {
-              field: "Unknown",
-              message: err.response.data.message,
-            },
-          ];
-          setErrors(validationMessages);
-        }
-      }
-
-      console.log(err);
+    if (check) {
+      dispatch(updateState({ isLoading: true }));
+      dispatch(login(formData));
     }
   };
 
@@ -55,7 +39,13 @@ const Login = ({ sidebarIsOpen }) => {
         document.body.classList.add("sidebar-open");
       }
     };
-  }, []);
+  }, [sidebarIsOpen]);
+
+  useEffect(() => {
+    if (user.token) {
+      navigate("/");
+    }
+  }, [user]);
 
   return (
     <div className="signup-page">
@@ -65,6 +55,9 @@ const Login = ({ sidebarIsOpen }) => {
           <form onSubmit={handleSubmit}>
             <h1 className="page-head">Welcome back!</h1>
 
+            {isError && message && (
+              <div className="alert alert-danger">{message}</div>
+            )}
             <div className="form-item mb-2">
               <label htmlFor="email">Email</label>
 
@@ -90,13 +83,6 @@ const Login = ({ sidebarIsOpen }) => {
                 value={formData.password}
               />
             </div>
-
-            {errors &&
-              errors.map((error, i) => (
-                <div className="text-danger" key={i}>
-                  {error.message}
-                </div>
-              ))}
 
             <button className="btn btn-primary d-flex align-items-center justify-content-center gap-2 mt-3 w-100">
               <i className="fas fa-door-open"></i>

@@ -5,37 +5,32 @@ const Users = (props) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/v1/users", {
-        headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODhmMTJjZTI3YzZmNjY4ZmYzOTE3MyIsImlhdCI6MTY3MDUxNDQ2MSwiZXhwIjoxNjcwNjg3MjYxfQ.8J4qO39EoSJJ-xCZ3DAtgA_NVXxzr7Lei-N8xxgvF34",
-        },
-      })
-      .then((res) => {
-        setUsers(res.data.data);
-
-        console.log(res.data);
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response.data);
-          // alert(err.response.data.message);
-        }
-      });
+    // axios
+    //   .get("api/v1/users", {
+    //     headers: {
+    //       Authorization:
+    //         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODhmMTJjZTI3YzZmNjY4ZmYzOTE3MyIsImlhdCI6MTY3MDUxNDQ2MSwiZXhwIjoxNjcwNjg3MjYxfQ.8J4qO39EoSJJ-xCZ3DAtgA_NVXxzr7Lei-N8xxgvF34",
+    //     },
+    //   })
+    //   .then((res) => {
+    //     setUsers(res.data.data);
+    //     console.log(res.data);
+    //   })
+    //   .catch((err) => {
+    //     if (err.response) {
+    //       console.log(err.response.data);
+    //       // alert(err.response.data.message);
+    //     }
+    //   });
   }, []);
 
   const renderUserStatus = (status) => {
-    switch (status) {
-      case 1:
-        return <span className="bdg bdg-success">Active</span>;
-        break;
-      case 2:
-        return <span className="bdg bdg-warning">Disabled</span>;
-        break;
-      default:
-        return <span className="bdg bdg-danger">Banned</span>;
-        break;
+    if (status === 1) {
+      return <span className="bdg bdg-success">Active</span>;
+    } else if (status === 2) {
+      return <span className="bdg bdg-warning">Disabled</span>;
+    } else if (status === 3) {
+      return <span className="bdg bdg-danger">Banned</span>;
     }
   };
 
@@ -46,7 +41,7 @@ const Users = (props) => {
         <td>
           <img
             src={`http://localhost:8000/storage/users/${user.photo}`}
-            alt="user photo"
+            alt="username"
           />
         </td>
         <td>{user.fullName}</td>
@@ -62,10 +57,10 @@ const Users = (props) => {
           })}
         </td>
         <td>
-          <a href="#" className="btn btn-sm btn-success me-1">
+          <a href="/" className="btn btn-sm btn-success me-1">
             Edit
           </a>
-          <a href="#" className="btn btn-sm btn-danger me-1">
+          <a href="/" className="btn btn-sm btn-danger me-1">
             Delete
           </a>
         </td>

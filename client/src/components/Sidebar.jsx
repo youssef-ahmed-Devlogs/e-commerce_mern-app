@@ -1,6 +1,15 @@
+import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { logout as logoutAction, updateState } from "../store/auth/actions";
 
 const Sidebar = ({ sidebarIsOpen }) => {
+  const dispatch = useDispatch();
+
+  const logout = () => {
+    dispatch(updateState({ isLoading: true }));
+    dispatch(logoutAction());
+  };
+
   return (
     <aside className={`sidebar ${sidebarIsOpen ? "sidebar-open" : ""}`}>
       <a href="/" className="brand">
@@ -54,13 +63,14 @@ const Sidebar = ({ sidebarIsOpen }) => {
           <i className="fas fa-cog"></i>
           Settings
         </NavLink>
-        <NavLink
-          to="/logout"
+
+        <button
+          onClick={logout}
           className="nav-link d-flex align-items-center gap-2"
         >
           <i className="fas fa-door-open"></i>
           Logout
-        </NavLink>
+        </button>
       </nav>
     </aside>
   );

@@ -1,6 +1,5 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { FaCog } from "react-icons/fa";
 
 const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
   // Sidebar settings
@@ -15,11 +14,6 @@ const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
     }
   };
 
-  useEffect(() => {
-    // setSidebarIsOpen(true);
-    // document.querySelector("body").classList.add("sidebar-open");
-  }, []);
-
   return (
     <header className={sidebarIsOpen ? "sidebar-open" : ""}>
       <div className="sidebar-button" onClick={toggleSidebar}>
@@ -31,7 +25,8 @@ const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
       <div className="right-area d-flex align-items-center gap-2">
         {/* Settings */}
         <Link to="/settings" className="settings-button">
-          <i className="fas fa-cog"></i>
+          {/* <i className="fas fa-cog"></i> */}
+          <FaCog />
         </Link>
 
         {/* Profile Area */}

@@ -1,5 +1,3 @@
-import { Container } from "react-bootstrap";
-
 const Footer = (props) => {
   return (
     <footer>
