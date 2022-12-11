@@ -9,6 +9,8 @@ import beautifulDate from "../helpers/beautifulDate";
 import BeautifulSelect from "../components/BeautifulSelect";
 import MainFilters from "../components/MainFilters";
 import { Link } from "react-router-dom";
+import ConfirmModal from "../components/ConfirmModal";
+import { showConfirmModal } from "../store/modal/action";
 
 const Users = (props) => {
   // Data
@@ -86,10 +88,14 @@ const Users = (props) => {
             <FaPen className="me-1" />
             Edit
           </Link>
-          <a href="/" className="btn btn-sm btn-danger me-1">
+
+          <button
+            onClick={() => dispatch(showConfirmModal())}
+            className="btn btn-sm btn-danger me-1"
+          >
             <FaTrashAlt className="me-1" />
             Delete
-          </a>
+          </button>
         </td>
       </tr>
     ));
@@ -97,6 +103,12 @@ const Users = (props) => {
 
   return (
     <div className="main-content users-page">
+      {/* <Button variant="primary" onClick={handleShow}> */}
+      {/* Launch demo modal */}
+      {/* </Button> */}
+
+      <ConfirmModal />
+
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="page-head">Users</h1>
 
