@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { logout as logoutAction, updateState } from "../store/auth/actions";
 
@@ -9,6 +9,11 @@ const Sidebar = ({ sidebarIsOpen }) => {
     dispatch(updateState({ isLoading: true }));
     dispatch(logoutAction());
   };
+
+  const loggedInUser = useSelector((state) => state.auth.user.data);
+  if (!loggedInUser || !loggedInUser.email) {
+    return <></>;
+  }
 
   return (
     <aside className={`sidebar ${sidebarIsOpen ? "sidebar-open" : ""}`}>

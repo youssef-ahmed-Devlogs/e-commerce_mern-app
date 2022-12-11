@@ -1,21 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { FaPlusSquare, FaPen, FaTrashAlt } from "react-icons/fa";
 import Pagination from "../components/Pagination";
-import {
-  changeLimit,
-  changePaginationNumsCount,
-} from "../store/pagination/action";
 import { fetchUsers } from "../store/users/actions";
 import parseQueries from "../helpers/parseQueries";
-import {
-  resetFilter,
-  searchFilter,
-  sortFilter,
-  sortOrderFilter,
-} from "../store/filter/actions";
+import { resetFilter, sortFilter } from "../store/filter/actions";
 import beautifulDate from "../helpers/beautifulDate";
-import BeautifulInput from "../components/BeautifulInput";
 import BeautifulSelect from "../components/BeautifulSelect";
+import MainFilters from "../components/MainFilters";
+import { Link } from "react-router-dom";
 
 const Users = (props) => {
   // Data
@@ -79,10 +72,7 @@ const Users = (props) => {
       <tr key={user.id}>
         <th scope="row">{index + 1}</th>
         <td>
-          <img
-            src={`http://localhost:8000/storage/users/${user.photo}`}
-            alt="username"
-          />
+          <img src={`/storage/users/${user.photo}`} alt="username" />
         </td>
         <td>{user.fullName}</td>
         <td>{user.username}</td>
@@ -92,10 +82,12 @@ const Users = (props) => {
         <td>{user.role.toUpperCase()}</td>
         <td>{beautifulDate(user.createdAt)}</td>
         <td>
-          <a href="/" className="btn btn-sm btn-success me-1">
+          <Link to="/users/edit" className="btn btn-sm btn-success me-1">
+            <FaPen className="me-1" />
             Edit
-          </a>
+          </Link>
           <a href="/" className="btn btn-sm btn-danger me-1">
+            <FaTrashAlt className="me-1" />
             Delete
           </a>
         </td>
@@ -105,108 +97,54 @@ const Users = (props) => {
 
   return (
     <div className="main-content users-page">
-      <h1 className="page-head">Users</h1>
+      <div className="d-flex align-items-center justify-content-between">
+        <h1 className="page-head">Users</h1>
 
-      {/* Filter */}
-      <div className="table-filter row">
-        <div className="col-xl-4">
-          <BeautifulInput
-            label={{ text: "Search", for: "search" }}
-            className="test"
-            id="search"
-            type="text"
-            placeholder="Search by name, username, email..."
-            value={mainFilterData.search}
-            onChange={(e) => dispatch(searchFilter(e.target.value))}
-          />
-        </div>
-
-        {/* Order by ( ASC || DESC ) */}
-        <div className="col-xl-4 mb-2">
-          <BeautifulSelect
-            label={{ text: "Order By", for: "sortOrder" }}
-            id="sortOrder"
-            onChange={(e) => dispatch(sortOrderFilter(e.target.value))}
-            value={mainFilterData.order}
+        <div className="actions">
+          <Link
+            to="/users/create"
+            className="btn btn-primary d-flex align-items-center gap-2"
           >
-            <option value="asc">Asc</option>
-            <option value="desc">Desc</option>
-          </BeautifulSelect>
-        </div>
-
-        <div className="col-xl-4 mb-2">
-          <div className="w-100">
-            <label htmlFor="limitFields">Limit Fields</label>
-            <select
-              id="limitFields"
-              className="form-control"
-              onChange={(e) => dispatch(changeLimit(+e.target.value))}
-              value={paginationData.limit}
-            >
-              <option value="2">2</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="col-xl-4 mb-2">
-          <div className="w-100">
-            <label htmlFor="paginationNumsCount">Pagination Numbers</label>
-            <select
-              id="paginationNumsCount"
-              className="form-control"
-              onChange={(e) =>
-                dispatch(changePaginationNumsCount(+e.target.value))
-              }
-              value={paginationData.paginationNumsCount}
-            >
-              <option value="3">3</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="col-xl-4 mb-2">
-          <div className="w-100">
-            <label htmlFor="role">Role</label>
-            <select
-              id="role"
-              className="form-control"
-              onChange={(e) =>
-                setFilterData({ ...filterData, role: e.target.value })
-              }
-              value={filterData.role}
-            >
-              <option value="">All</option>
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="col-xl-4 mb-2">
-          <div className="w-100">
-            <label htmlFor="status">Status</label>
-            <select
-              id="status"
-              className="form-control"
-              onChange={(e) =>
-                setFilterData({ ...filterData, status: e.target.value })
-              }
-              value={filterData.status}
-            >
-              <option value="">All</option>
-              <option value="1">Active</option>
-              <option value="2">Disabled</option>
-              <option value="3">Banned</option>
-            </select>
-          </div>
+            <FaPlusSquare />
+            Create
+          </Link>
         </div>
       </div>
+
+      {/* Main Filter */}
+      <MainFilters className="mb-2">
+        {/* ========== additional filters ============= */}
+
+        {/* Role Filter */}
+        <BeautifulSelect
+          label={{ text: "Role", for: "role" }}
+          id="role"
+          className="form-control"
+          onChange={(e) =>
+            setFilterData({ ...filterData, role: e.target.value })
+          }
+          value={filterData.role}
+        >
+          <option value="">All</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </BeautifulSelect>
+
+        {/* Status Filter */}
+        <BeautifulSelect
+          label={{ text: "Status", for: "status" }}
+          id="status"
+          onChange={(e) =>
+            setFilterData({ ...filterData, status: e.target.value })
+          }
+          value={filterData.status}
+        >
+          <option value="">All</option>
+          <option value="1">Active</option>
+          <option value="2">Disabled</option>
+          <option value="3">Banned</option>
+        </BeautifulSelect>
+      </MainFilters>
 
       <div className="card card-table">
         <div className="table-responsive">
@@ -221,7 +159,6 @@ const Users = (props) => {
                   #
                 </th>
                 <th scope="col">Photo</th>
-
                 <th
                   scope="col"
                   onClick={() => dispatch(sortFilter("firstName"))}
@@ -231,7 +168,6 @@ const Users = (props) => {
                 >
                   Name
                 </th>
-
                 <th
                   scope="col"
                   onClick={() => dispatch(sortFilter("username"))}

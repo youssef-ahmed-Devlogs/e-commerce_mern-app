@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { FaCog } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
+  const loggedInUser = useSelector((state) => state.auth.user.data);
+
   // Sidebar settings
   const toggleSidebar = () => {
     setSidebarIsOpen(!sidebarIsOpen);
@@ -13,6 +16,10 @@ const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
       document.querySelector("body").classList.add("sidebar-open");
     }
   };
+
+  if (!loggedInUser || !loggedInUser.photo) {
+    return <></>;
+  }
 
   return (
     <header className={sidebarIsOpen ? "sidebar-open" : ""}>
@@ -34,11 +41,11 @@ const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
           to="/signup"
           className="profile-area d-flex align-items-center gap-2"
         >
-          <div className="username">Youssef Ahmed</div>
+          <div className="username">{loggedInUser.fullName}</div>
           <div className="photo">
             <img
-              src="https://scontent.fcai19-4.fna.fbcdn.net/v/t39.30808-6/300379318_611769147160937_8224297053076357217_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeF9vk_mh_uJtw6y1U40YaoKScGwwD6mDl9JwbDAPqYOXz7dZnz9UIqxYPB07h73b8X00h1xPIO2Wg_I2_qdXikd&_nc_ohc=QbTOJgiVAdIAX_1IXwk&_nc_ht=scontent.fcai19-4.fna&oh=00_AfCosvet3N7uNgljKVhUVzefzNlhoUc0it35r4X2NSOdgg&oe=639680F5"
-              alt="username"
+              src={`http://localhost:8000/storage/users/${loggedInUser.photo}`}
+              alt={loggedInUser.fullName}
             />
           </div>
         </Link>

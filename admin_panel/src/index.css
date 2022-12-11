@@ -119,6 +119,30 @@ a.btn {
   color: var(--primary-color) !important;
 }
 
+.main-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px 5px;
+  flex-wrap: wrap;
+}
+
+.main-filter .beautiful-input-item label {
+  font-size: var(--small-text);
+  font-weight: bold;
+  color: var(--black-color);
+}
+
+.beautiful-input-item {
+  min-width: 150px;
+  max-width: 200px;
+}
+
+.beautiful-input-item.w-lg {
+  min-width: 350px;
+  max-width: 450px;
+}
+
 /* SIGNUP & LOGIN */
 .signup-page {
   display: flex;
@@ -216,6 +240,7 @@ header .right-area .profile-area:hover {
 
 header .right-area .profile-area .username {
   font-size: var(--third-text);
+  text-transform: capitalize;
 }
 
 header .right-area .profile-area .photo img {
@@ -358,12 +383,6 @@ thead th.active {
   background-color: var(--white-color);
   padding: 10px;
   font-size: var(--third-text);
-}
-
-.table-filter label {
-  font-size: var(--small-text);
-  font-weight: bold;
-  color: var(--black-color);
 }
 
 .pagination {

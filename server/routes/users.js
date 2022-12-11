@@ -9,7 +9,7 @@ router.get("/verifyEmail/:token", AuthController.verifyEmail);
 router.post("/forgotPassword", AuthController.forgotPassword);
 router.patch("/resetPassword/:token", AuthController.resetPassword);
 
-// router.use(AuthController.auth);
+router.use(AuthController.auth);
 
 router.post("/logout", AuthController.logout);
 router.post("/terminateSession", AuthController.terminateSession);
@@ -17,7 +17,7 @@ router.post("/terminateSession", AuthController.terminateSession);
 router.patch("/updateMe", UserController.uploadPhoto, UserController.updateMe);
 router.patch("/updateMyPassword", UserController.updateMyPassword);
 
-// router.use(AuthController.restrictTo("admin"));
+router.use(AuthController.restrictTo("admin"));
 
 // Admin Panel
 router

@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Login from "./pages/auth/Login";
+import Error404 from "./pages/errors/Error404";
 import { protect, resetState } from "./store/auth/actions";
 
 function App() {
@@ -59,14 +60,6 @@ function App() {
     }
   }, []);
 
-  // Remove header and sidebar and any thing like that when we in specific pages
-  const { pathname } = useLocation();
-
-  const checkIfInSignupOrLogin = () => {
-    const blackList = ["login"];
-    return blackList.includes(pathname.split("/").join(""));
-  };
-
   if (isLoading || loading) {
     return (
       <div className="" style={{ position: "fixed", left: "50%", top: "50%" }}>
@@ -82,16 +75,14 @@ function App() {
   }
 
   return (
-    <div className={!checkIfInSignupOrLogin() ? "wrapper" : ""}>
-      {!checkIfInSignupOrLogin() && <Sidebar sidebarIsOpen={sidebarIsOpen} />}
+    <div className="wrapper">
+      <Sidebar sidebarIsOpen={sidebarIsOpen} />
 
       <main>
-        {!checkIfInSignupOrLogin() && (
-          <Header
-            sidebarIsOpen={sidebarIsOpen}
-            setSidebarIsOpen={setSidebarIsOpen}
-          />
-        )}
+        <Header
+          sidebarIsOpen={sidebarIsOpen}
+          setSidebarIsOpen={setSidebarIsOpen}
+        />
 
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -100,12 +91,12 @@ function App() {
             path="/login"
             element={<Login sidebarIsOpen={sidebarIsOpen} />}
           />
-          {/* <Route path="*" element={<Navigate replace to="/login" />} /> */}
+          <Route path="/404" element={<Error404 />} />
+          <Route path="*" element={<Navigate replace to="/404" />} />
         </Routes>
 
         <ToastContainer />
-
-        {!checkIfInSignupOrLogin() && <Footer />}
+        <Footer />
       </main>
     </div>
   );
