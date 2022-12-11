@@ -17,9 +17,11 @@ const Login = ({ sidebarIsOpen }) => {
   const handleChange = ({ currentTarget }) => {
     setFormData({ ...formData, [currentTarget.name]: currentTarget.value });
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const {email, password} = formData
+
     // Validation in frontend
 
     /**
@@ -29,9 +31,13 @@ const Login = ({ sidebarIsOpen }) => {
      * password min 8 char
      */
 
-    if (false) {
-      //
-    } else if (false) {
+    if (!email) {
+      toast.error('Please Fill Out All Fields');
+      return
+    } else if (password) {
+      toast.error('Please Fill Out All Fields');
+      return
+
     } else {
       dispatch(updateState({ isLoading: true }));
       dispatch(login(formData));
