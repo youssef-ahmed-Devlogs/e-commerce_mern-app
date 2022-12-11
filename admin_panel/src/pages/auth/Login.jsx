@@ -29,9 +29,9 @@ const Login = ({ sidebarIsOpen }) => {
      * password min 8 char
      */
 
-    if (true) {
+    if (false) {
       //
-    } else if (true) {
+    } else if (false) {
     } else {
       dispatch(updateState({ isLoading: true }));
       dispatch(login(formData));

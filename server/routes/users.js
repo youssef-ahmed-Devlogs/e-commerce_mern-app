@@ -9,7 +9,7 @@ router.get("/verifyEmail/:token", AuthController.verifyEmail);
 router.post("/forgotPassword", AuthController.forgotPassword);
 router.patch("/resetPassword/:token", AuthController.resetPassword);
 
-router.use(AuthController.auth);
+// router.use(AuthController.auth);
 
 router.post("/logout", AuthController.logout);
 router.post("/terminateSession", AuthController.terminateSession);
