@@ -14,14 +14,14 @@ function Pagination({ data }) {
       const previousPage = page - 1 > 1 ? page - 1 : 1;
       dispatch(changePage(previousPage));
     }
-  }, [data, page]);
+  }, [data, page, dispatch]);
 
   useEffect(() => {
     // Reset Pagination data after going from the current page
     return () => {
       dispatch(resetPagination());
     };
-  }, []);
+  }, [dispatch]);
 
   const renderPagesNumber = () => {
     const totalPages = Math.ceil(data.total / limit);
@@ -31,8 +31,8 @@ function Pagination({ data }) {
       numbers[i] = (
         <li
           key={i}
-          className={`page-item ${i == page && "active"}`}
-          aria-current={i == page && "page"}
+          className={`page-item ${i === page && "active"}`}
+          aria-current={i === page && "page"}
         >
           <button className="page-link" onClick={() => dispatch(changePage(i))}>
             {i}
@@ -49,37 +49,46 @@ function Pagination({ data }) {
     return numbers.slice(page, page + paginationNumsCount);
   };
 
+  const renderPreviousButton = () => {
+    return (
+      <li className={`page-item ${page <= 1 && "disabled"}`}>
+        <button
+          className="page-link"
+          onClick={() => dispatch(changePage(page > 1 ? page - 1 : page))}
+        >
+          Previous
+        </button>
+      </li>
+    );
+  };
+
+  const renderNextButton = () => {
+    return (
+      <li
+        className={`page-item ${
+          page >= Math.ceil(data.total / limit) && "disabled"
+        }`}
+      >
+        <button
+          className="page-link"
+          onClick={() =>
+            dispatch(
+              changePage(page < Math.ceil(data.total / limit) ? page + 1 : page)
+            )
+          }
+        >
+          Next
+        </button>
+      </li>
+    );
+  };
+
   return (
     <nav aria-label="..." className="d-flex justify-content-center mt-2">
       <ul className="pagination">
-        <li className={`page-item ${page <= 1 && "disabled"}`}>
-          <a
-            className="page-link"
-            onClick={() => dispatch(changePage(page > 1 ? page - 1 : page))}
-          >
-            Previous
-          </a>
-        </li>
+        {renderPreviousButton()}
         {data.data && renderPagesNumber()}
-
-        <li
-          className={`page-item ${
-            page >= Math.ceil(data.total / limit) && "disabled"
-          }`}
-        >
-          <a
-            className="page-link"
-            onClick={() =>
-              dispatch(
-                changePage(
-                  page < Math.ceil(data.total / limit) ? page + 1 : page
-                )
-              )
-            }
-          >
-            Next
-          </a>
-        </li>
+        {renderNextButton()}
       </ul>
     </nav>
   );

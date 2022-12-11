@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { login, updateState } from "../../store/auth/actions";
 
 const Login = ({ sidebarIsOpen }) => {
@@ -12,9 +12,7 @@ const Login = ({ sidebarIsOpen }) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoading, isSuccess, isError, message, user } = useSelector(
-    (state) => state.auth
-  );
+  const { isError, message, user } = useSelector((state) => state.auth);
 
   const handleChange = ({ currentTarget }) => {
     setFormData({ ...formData, [currentTarget.name]: currentTarget.value });
@@ -23,9 +21,18 @@ const Login = ({ sidebarIsOpen }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Validation in frontend
-    const check = true;
 
-    if (check) {
+    /**
+     * email required
+     * password required
+     * email must be a valid email
+     * password min 8 char
+     */
+
+    if (true) {
+      //
+    } else if (true) {
+    } else {
       dispatch(updateState({ isLoading: true }));
       dispatch(login(formData));
     }
@@ -45,7 +52,7 @@ const Login = ({ sidebarIsOpen }) => {
     if (user.token) {
       navigate("/");
     }
-  }, [user]);
+  }, [user, navigate]);
 
   return (
     <div className="signup-page">

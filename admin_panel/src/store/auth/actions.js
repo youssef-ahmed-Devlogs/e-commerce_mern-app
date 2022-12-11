@@ -32,7 +32,7 @@ export const login = (formData) => {
       delete data.status;
       delete data.data.accessTokens;
 
-      if (data.data.role == "user") {
+      if (data.data.role === "user") {
         const updatedState = {
           isError: true,
           message: "You are not an admin",
@@ -83,7 +83,7 @@ export const logout = () => {
       };
       const { data } = await axios.post(`${URL}/logout`, {}, options);
 
-      if (data.status == "success") {
+      if (data.status === "success") {
         const updatedState = {
           user: {},
           isSuccess: true,
@@ -128,7 +128,7 @@ export const protect = () => {
           options
         );
 
-        if (data.data.role == "user") {
+        if (data.data.role === "user") {
           localStorage.removeItem("user");
           return dispatch(updateState({ user: {} }));
         }

@@ -24,12 +24,12 @@ function App() {
     if (!user.token) {
       navigate("/login");
     }
-  }, [user]);
+  }, [user, navigate]);
 
   useEffect(() => {
     setLoading(false);
     dispatch(protect());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -41,7 +41,7 @@ function App() {
     }
 
     dispatch(resetState());
-  }, [isSuccess, isError]);
+  }, [isSuccess, isError, dispatch, message]);
 
   // Sidebar settings
   const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
@@ -61,9 +61,9 @@ function App() {
 
   // Remove header and sidebar and any thing like that when we in specific pages
   const { pathname } = useLocation();
+
   const checkIfInSignupOrLogin = () => {
     const blackList = ["login"];
-
     return blackList.includes(pathname.split("/").join(""));
   };
 

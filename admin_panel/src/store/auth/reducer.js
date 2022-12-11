@@ -1,4 +1,4 @@
-import { LOGOUT, RESET_STATE, SAVE_USER, UPDATE_STATE } from "./actions";
+import { RESET_STATE, UPDATE_STATE } from "./actions";
 
 const user = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user"))

@@ -14,6 +14,8 @@ import {
   sortOrderFilter,
 } from "../store/filter/actions";
 import beautifulDate from "../helpers/beautifulDate";
+import BeautifulInput from "../components/BeautifulInput";
+import BeautifulSelect from "../components/BeautifulSelect";
 
 const Users = (props) => {
   // Data
@@ -35,7 +37,7 @@ const Users = (props) => {
     return () => {
       dispatch(resetFilter());
     };
-  }, []);
+  }, [dispatch]);
 
   // Fetch Data
   useEffect(() => {
@@ -51,7 +53,7 @@ const Users = (props) => {
      * - filter
      */
     dispatch(fetchUsers(parseQueries(queriesObject)));
-  }, [paginationData, mainFilterData, filterData]);
+  }, [paginationData, mainFilterData, filterData, dispatch]);
 
   /**
    *
@@ -107,33 +109,29 @@ const Users = (props) => {
 
       {/* Filter */}
       <div className="table-filter row">
-        <div className="col-xl-4 mb-2">
-          <div className="w-100">
-            <label htmlFor="search">Search</label>
-            <input
-              id="search"
-              type="text"
-              placeholder="Search by name, username, email..."
-              className="form-control"
-              value={mainFilterData.search}
-              onChange={(e) => dispatch(searchFilter(e.target.value))}
-            />
-          </div>
+        <div className="col-xl-4">
+          <BeautifulInput
+            label={{ text: "Search", for: "search" }}
+            className="test"
+            id="search"
+            type="text"
+            placeholder="Search by name, username, email..."
+            value={mainFilterData.search}
+            onChange={(e) => dispatch(searchFilter(e.target.value))}
+          />
         </div>
 
+        {/* Order by ( ASC || DESC ) */}
         <div className="col-xl-4 mb-2">
-          <div className="w-100">
-            <label htmlFor="sortOrder">Order By</label>
-            <select
-              id="sortOrder"
-              className="form-control"
-              onChange={(e) => dispatch(sortOrderFilter(e.target.value))}
-              value={mainFilterData.order}
-            >
-              <option value="asc">Asc</option>
-              <option value="desc">Desc</option>
-            </select>
-          </div>
+          <BeautifulSelect
+            label={{ text: "Order By", for: "sortOrder" }}
+            id="sortOrder"
+            onChange={(e) => dispatch(sortOrderFilter(e.target.value))}
+            value={mainFilterData.order}
+          >
+            <option value="asc">Asc</option>
+            <option value="desc">Desc</option>
+          </BeautifulSelect>
         </div>
 
         <div className="col-xl-4 mb-2">
@@ -223,6 +221,7 @@ const Users = (props) => {
                   #
                 </th>
                 <th scope="col">Photo</th>
+
                 <th
                   scope="col"
                   onClick={() => dispatch(sortFilter("firstName"))}
@@ -232,6 +231,7 @@ const Users = (props) => {
                 >
                   Name
                 </th>
+
                 <th
                   scope="col"
                   onClick={() => dispatch(sortFilter("username"))}

@@ -17,9 +17,9 @@ const parseQueries = (queriesObject) => {
   const keysFilter = Object.keys(queriesObject);
   keysFilter.forEach((key) => {
     if (
-      queriesObject[key] == "" ||
-      queriesObject[key] == undefined ||
-      queriesObject[key] == null
+      queriesObject[key] === "" ||
+      queriesObject[key] === undefined ||
+      queriesObject[key] === null
     ) {
       delete queriesObject[key];
     }
