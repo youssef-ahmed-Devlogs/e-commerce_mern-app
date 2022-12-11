@@ -87,7 +87,6 @@ class ApiHandle {
     } else {
       this.query = this.query.select("-__v");
     }
-
     return this;
   }
 

@@ -31,10 +31,6 @@ export const fetchUsers = (queries = "") => {
     try {
       const { data } = await axios.get(`${URL}?${queries}`, options);
       dispatch(getUsers(data));
-
-      console.log("====================================");
-      console.log(data);
-      console.log("====================================");
     } catch (error) {
       console.log("====================================");
       console.log(error);
