@@ -2,7 +2,7 @@ const app = require("./app");
 const mongoose = require("mongoose");
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/meStore")
+  .connect(process.env.DATABASE)
   .then((connections) => console.log("Database connection successfully."))
   .catch((err) => {
     console.log("Database connection failed:", err);
