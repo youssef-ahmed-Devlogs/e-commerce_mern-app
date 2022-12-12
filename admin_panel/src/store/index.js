@@ -5,7 +5,6 @@ import { usersReducer } from "./users/reducer";
 import { paginationReducer } from "./pagination/reducer";
 import { filterReducer } from "./filter/reducer";
 import { deleteModalReducer } from "./modals/delete/reducer";
-import { globalReducer } from "./global/reducer";
 
 const appReducer = combineReducers({
   auth: authReducer,
@@ -13,7 +12,6 @@ const appReducer = combineReducers({
   paginationData: paginationReducer,
   mainFilterData: filterReducer,
   deleteModalData: deleteModalReducer,
-  globalData: globalReducer,
 });
 
 export const store = createStore(appReducer, applyMiddleware(thunk));

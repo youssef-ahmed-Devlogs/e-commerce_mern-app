@@ -8,7 +8,6 @@ import { closeDeleteModal } from "../../store/modals/delete/action";
 function DeleteModal() {
   const dispatch = useDispatch();
   const { user: loggedInUser } = useSelector((state) => state.auth);
-  const { BASE_URL } = useSelector((state) => state.globalData);
   const { show, data } = useSelector((state) => state.deleteModalData);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,15 +18,24 @@ function DeleteModal() {
     setIsLoading(true);
 
     // Delete in server
-    const url = `${BASE_URL}/${data.resourceName}/${data.id}`;
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedInUser.token}`,
-      },
-    };
-    const res = await axios.delete(url, config);
+    try {
+      const url = `/api/v1/${data.resourceName}/${data.id}`;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${loggedInUser.token}`,
+        },
+      };
+      const res = await axios.delete(url, config);
 
-    console.log(res);
+      // Refetch data
+      if (res.status === "204") {
+        dispatch(data.fetchResourceAction(localStorage.getItem("queries")));
+        // dispatch(fetchUsers(localStorage.getItem("queries")));
+      }
+    } catch (error) {
+      console.error("Error Delete Modal");
+    }
+
     // Hide loading button and close modal
     setIsLoading(false);
     handleClose();

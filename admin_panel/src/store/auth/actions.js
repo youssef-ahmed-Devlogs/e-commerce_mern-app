@@ -1,5 +1,8 @@
 import axios from "axios";
 
+const BASE_URL = "/api/v1";
+const URL = `${BASE_URL}/users`;
+
 export const LOGIN = "LOGIN";
 export const UPDATE_STATE = "UPDATE_STATE";
 export const SAVE_USER = "SAVE_USER";
@@ -38,8 +41,6 @@ export const resetAuthState = () => {
     },
   };
 };
-
-const URL = "/api/v1/users";
 
 export const login = (formData) => {
   return async (dispatch) => {
@@ -119,7 +120,6 @@ export const logout = () => {
         };
         dispatch(updateState(updatedState));
       }
-      console.log(error);
     }
   };
 };
@@ -152,8 +152,6 @@ export const protect = () => {
         }
 
         const user = data.data ? { ...data, token: loggedInUser.token } : {};
-
-        console.log(user);
 
         dispatch(saveUser(user));
       }

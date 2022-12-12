@@ -39,6 +39,7 @@ const Users = (props) => {
       id: resource._id,
       resourceName: "users",
       itemName,
+      fetchResourceAction: fetchUsers,
     };
     dispatch(showDeleteModal(deleteModalData));
   };
@@ -63,7 +64,8 @@ const Users = (props) => {
      * - pagination
      * - filter
      */
-    dispatch(fetchUsers(parseQueries(queriesObject)));
+    const queries = parseQueries(queriesObject);
+    dispatch(fetchUsers(queries));
   }, [paginationData, mainFilterData, filterData, dispatch]);
 
   /**
