@@ -13,10 +13,11 @@ import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
-import Users from "./pages/Users";
+import Users from "./pages/users/Users";
 import Login from "./pages/auth/Login";
 import Error404 from "./pages/errors/Error404";
 import { protect, resetAuthState } from "./store/auth/actions";
+import CreateUser from "./pages/users/CreateUser";
 
 function App() {
   const dispatch = useDispatch();
@@ -105,7 +106,10 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="users">
+            <Route index element={<Users />} />
+            <Route path="create" element={<CreateUser />} />
+          </Route>
           <Route
             path="/login"
             element={<Login sidebarIsOpen={sidebarIsOpen} />}

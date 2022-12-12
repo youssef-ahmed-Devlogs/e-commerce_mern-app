@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaPlusSquare, FaPen, FaTrashAlt } from "react-icons/fa";
-import Pagination from "../components/Pagination";
-import { fetchUsers } from "../store/users/actions";
-import parseQueries from "../helpers/parseQueries";
-import { resetFilter, sortFilter } from "../store/filter/actions";
-import beautifulDate from "../helpers/beautifulDate";
-import BeautifulSelect from "../components/BeautifulSelect";
-import MainFilters from "../components/MainFilters";
+import Pagination from "../../components/Pagination";
+import { fetchUsers } from "../../store/users/actions";
+import parseQueries from "../../helpers/parseQueries";
+import { resetFilter, sortFilter } from "../../store/filter/actions";
+import beautifulDate from "../../helpers/beautifulDate";
+import BeautifulSelect from "../../components/BeautifulSelect";
+import MainFilters from "../../components/MainFilters";
 import { Link } from "react-router-dom";
-import { showDeleteModal } from "../store/modals/delete/action";
-import DeleteModal from "../components/modals/DeleteModal";
+import { showDeleteModal } from "../../store/modals/delete/action";
+import DeleteModal from "../../components/modals/DeleteModal";
 
 const Users = (props) => {
   // Data
@@ -143,7 +143,6 @@ const Users = (props) => {
         <BeautifulSelect
           label={{ text: "Role", for: "role" }}
           id="role"
-          className="form-control"
           onChange={(e) =>
             setFilterData({ ...filterData, role: e.target.value })
           }

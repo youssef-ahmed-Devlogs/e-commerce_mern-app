@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { closeDeleteModal } from "../../store/modals/delete/action";
 
 function DeleteModal() {
@@ -28,9 +29,9 @@ function DeleteModal() {
       const res = await axios.delete(url, config);
 
       // Refetch data
-      if (res.status === "204") {
+      if (res.status === 204) {
         dispatch(data.fetchResourceAction(localStorage.getItem("queries")));
-        // dispatch(fetchUsers(localStorage.getItem("queries")));
+        toast.success(`${data.itemName} Deleted successfully`);
       }
     } catch (error) {
       console.error("Error Delete Modal");
