@@ -17,10 +17,10 @@ const Login = ({ sidebarIsOpen }) => {
   const handleChange = ({ currentTarget }) => {
     setFormData({ ...formData, [currentTarget.name]: currentTarget.value });
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {email, password} = formData
+    const { email, password } = formData;
 
     // Validation in frontend
 
@@ -32,12 +32,9 @@ const Login = ({ sidebarIsOpen }) => {
      */
 
     if (!email) {
-      toast.error('Please Fill Out All Fields');
-      return
-    } else if (password) {
-      toast.error('Please Fill Out All Fields');
-      return
-
+      toast.error("Please provide the email");
+    } else if (!password) {
+      toast.error("Please provide the password");
     } else {
       dispatch(updateState({ isLoading: true }));
       dispatch(login(formData));
