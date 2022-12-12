@@ -2,7 +2,23 @@ import axios from "axios";
 
 export const LOGIN = "LOGIN";
 export const UPDATE_STATE = "UPDATE_STATE";
+export const SAVE_USER = "SAVE_USER";
+export const DELETE_USER = "DELETE_USER";
 export const RESET_STATE = "RESET_STATE";
+
+export const saveUser = (user) => {
+  return {
+    type: SAVE_USER,
+    payload: user,
+  };
+};
+
+export const deleteUser = () => {
+  return {
+    type: DELETE_USER,
+    payload: {},
+  };
+};
 
 export const updateState = (state) => {
   return {
@@ -11,7 +27,7 @@ export const updateState = (state) => {
   };
 };
 
-export const resetState = () => {
+export const resetAuthState = () => {
   return {
     type: RESET_STATE,
     payload: {
@@ -44,25 +60,24 @@ export const login = (formData) => {
       }
 
       const updatedState = {
-        user: data,
         isSuccess: true,
         message: "You are logged in successfully",
         isLoading: false,
         isError: false,
       };
 
-      localStorage.setItem("user", JSON.stringify(data));
+      dispatch(saveUser(data));
       dispatch(updateState(updatedState));
     } catch (error) {
       if (error.response) {
         const updatedState = {
-          user: {},
           isError: true,
           message: error.response.data.message,
           isSuccess: false,
           isLoading: false,
         };
 
+        dispatch(deleteUser());
         dispatch(updateState(updatedState));
       }
     }
@@ -85,14 +100,13 @@ export const logout = () => {
 
       if (data.status === "success") {
         const updatedState = {
-          user: {},
           isSuccess: true,
           message: data.message,
           isError: false,
           isLoading: false,
         };
 
-        localStorage.removeItem("user");
+        dispatch(deleteUser());
         dispatch(updateState(updatedState));
       }
     } catch (error) {
@@ -110,6 +124,11 @@ export const logout = () => {
   };
 };
 
+/**
+ * Listening any change in the current logged in user
+ * If the token did change or expire or he no longer exists in the database for any reason, the user will be logout automatic
+ * If any other data did change then will change in UI
+ */
 export const protect = () => {
   return async (dispatch) => {
     const loggedInUser = localStorage.getItem("user")
@@ -129,28 +148,17 @@ export const protect = () => {
         );
 
         if (data.data.role === "user") {
-          localStorage.removeItem("user");
-          return dispatch(updateState({ user: {} }));
+          return dispatch(deleteUser());
         }
 
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ ...data, token: loggedInUser.token })
-        );
+        const user = data.data ? { ...data, token: loggedInUser.token } : {};
 
-        const updatedState = {
-          user: data.data ? { ...data, token: loggedInUser.token } : {},
-        };
+        console.log(user);
 
-        dispatch(updateState(updatedState));
+        dispatch(saveUser(user));
       }
     } catch (error) {
-      localStorage.removeItem("user");
-      const updatedState = {
-        user: {},
-      };
-
-      dispatch(updateState(updatedState));
+      dispatch(deleteUser());
     }
   };
 };

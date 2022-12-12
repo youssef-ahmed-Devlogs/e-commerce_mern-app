@@ -9,8 +9,8 @@ import beautifulDate from "../helpers/beautifulDate";
 import BeautifulSelect from "../components/BeautifulSelect";
 import MainFilters from "../components/MainFilters";
 import { Link } from "react-router-dom";
-import ConfirmModal from "../components/ConfirmModal";
-import { showConfirmModal } from "../store/modal/action";
+import { showDeleteModal } from "../store/modals/delete/action";
+import DeleteModal from "../components/modals/DeleteModal";
 
 const Users = (props) => {
   // Data
@@ -26,6 +26,22 @@ const Users = (props) => {
     role: "user",
     status: 1,
   });
+
+  // resource is like (user, product, category) data.
+  const handleDelete = (resource) => {
+    const itemName =
+      resource.title ||
+      resource.name ||
+      resource.fullName ||
+      resource.username ||
+      "item";
+    const deleteModalData = {
+      id: resource._id,
+      resourceName: "users",
+      itemName,
+    };
+    dispatch(showDeleteModal(deleteModalData));
+  };
 
   useEffect(() => {
     // Reset main filter data after going from the current page
@@ -90,7 +106,7 @@ const Users = (props) => {
           </Link>
 
           <button
-            onClick={() => dispatch(showConfirmModal())}
+            onClick={() => handleDelete(user)}
             className="btn btn-sm btn-danger me-1"
           >
             <FaTrashAlt className="me-1" />
@@ -103,12 +119,6 @@ const Users = (props) => {
 
   return (
     <div className="main-content users-page">
-      {/* <Button variant="primary" onClick={handleShow}> */}
-      {/* Launch demo modal */}
-      {/* </Button> */}
-
-      <ConfirmModal />
-
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="page-head">Users</h1>
 
@@ -231,6 +241,9 @@ const Users = (props) => {
           </table>
         </div>
       </div>
+
+      {/* Delete Modal */}
+      <DeleteModal />
 
       {/* Pagination */}
       <Pagination data={users} />
