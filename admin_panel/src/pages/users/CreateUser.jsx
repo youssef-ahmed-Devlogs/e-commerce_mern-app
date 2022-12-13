@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { ProgressBar } from "react-bootstrap";
 import { FaArrowLeft, FaPlusSquare } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,6 +11,7 @@ import { handleBackAuto } from "../../store/settings/actions";
 import { createUser } from "../../store/users/actions";
 
 function CreateUser() {
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -18,7 +20,7 @@ function CreateUser() {
     password: "",
     passwordConfirm: "",
     phone: "",
-    // photo: "",
+    photo: "",
     role: "user",
     status: "1",
   });
@@ -32,7 +34,7 @@ function CreateUser() {
       password: "",
       passwordConfirm: "",
       phone: "",
-      // photo: "",
+      photo: "",
       role: "user",
       status: "1",
     });
@@ -46,13 +48,18 @@ function CreateUser() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleUpload = (e) => {
+    const photo = e.target.files[0];
+    setFormData({ ...formData, photo });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Validation
     if (false) {
     } else {
-      dispatch(createUser(formData, navigate));
+      dispatch(createUser(formData, navigate, setUploadProgress));
       resetState();
     }
   };
@@ -136,11 +143,13 @@ function CreateUser() {
             </div>
 
             <div className="col-xl-6">
+              <ProgressBar now={uploadProgress} label={`${uploadProgress}%`} />
               <BeautifulInput
                 label={{ text: "Photo", for: "photo" }}
                 type="file"
                 id="photo"
                 placeholder="Photo"
+                onChange={handleUpload}
               />
             </div>
 

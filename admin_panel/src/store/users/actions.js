@@ -47,13 +47,30 @@ export const fetchUsers = (queries = "") => {
   };
 };
 
-export const createUser = (formData, navigate) => {
+export const createUser = (formData, navigate, setUploadProgress) => {
   return async (dispatch) => {
     const options = getOptions();
 
     try {
       if (options !== "noToken") {
-        const { data } = await axios.post(URL, formData, options);
+        const formDataObj = new FormData();
+
+        for (let key in formData) {
+          if (formData[key] == "") {
+            continue;
+          }
+          formDataObj.append(key, formData[key]);
+        }
+
+        const { data } = await axios.post(URL, formDataObj, {
+          ...options,
+          onUploadProgress: (progressEvent) => {
+            const progressNow = Math.round(
+              (progressEvent.loaded / progressEvent.total) * 100
+            ); // (200 / 400 * 100) = 50%
+            setUploadProgress(progressNow);
+          },
+        });
         toast.success(`User ${data.data.username} created successfully`);
 
         const siteSettings = localStorage.getItem("siteSettings")
@@ -72,6 +89,10 @@ export const createUser = (formData, navigate) => {
       ) {
         toast.error(error.response.data.message);
       }
+
+      console.log("====================================");
+      console.log(error);
+      console.log("====================================");
       console.error("Error: createUser action");
     }
   };
