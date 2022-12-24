@@ -127,6 +127,7 @@ a.btn {
   flex-wrap: wrap;
 }
 
+.beautiful-uploader-item label,
 .beautiful-input-item label {
   font-size: var(--small-text);
   font-weight: bold;
@@ -186,6 +187,23 @@ input[type="checkbox"].fancy-checkbox:checked + label .bullet {
   background-color: var(--white-color);
   left: initial;
   right: 3px;
+}
+
+.beautiful-uploader-item label.design {
+  border: 4px dashed var(--primary-opacity-color);
+  background-color: var(--primary-color);
+  width: 100%;
+  height: 100px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.beautiful-uploader-item input {
+  display: none;
 }
 
 /* SIGNUP & LOGIN */

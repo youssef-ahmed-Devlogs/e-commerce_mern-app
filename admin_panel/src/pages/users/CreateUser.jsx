@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import BeautifulInput from "../../components/BeautifulInput";
 import BeautifulSelect from "../../components/BeautifulSelect";
+import BeautifulUploader from "../../components/BeautifulUploader";
 import FancyCheckbox from "../../components/FancyCheckbox";
 import { handleBackAuto } from "../../store/settings/actions";
 import { createUser } from "../../store/users/actions";
@@ -143,17 +144,6 @@ function CreateUser() {
             </div>
 
             <div className="col-xl-6">
-              <ProgressBar now={uploadProgress} label={`${uploadProgress}%`} />
-              <BeautifulInput
-                label={{ text: "Photo", for: "photo" }}
-                type="file"
-                id="photo"
-                placeholder="Photo"
-                onChange={handleUpload}
-              />
-            </div>
-
-            <div className="col-xl-6">
               <BeautifulInput
                 label={{ text: "Password", for: "password" }}
                 type="password"
@@ -203,6 +193,15 @@ function CreateUser() {
                 <option value="3">Banned</option>
               </BeautifulSelect>
             </div>
+          </div>
+
+          <div className="col-xl-12">
+            <ProgressBar now={uploadProgress} label={`${uploadProgress}%`} />
+            <BeautifulUploader
+              label={{ text: "Photo", for: "photo" }}
+              id="photo"
+              onChange={handleUpload}
+            />
           </div>
 
           <button className="btn btn-primary mt-2 d-flex align-items-center gap-2">
