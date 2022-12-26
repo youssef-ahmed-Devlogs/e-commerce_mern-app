@@ -34,6 +34,9 @@ const parseQueries = (queriesObject) => {
     if (index < keys.length - 1) queries += "&";
   });
 
+  // Save in localStorage
+  localStorage.setItem("queries", queries);
+
   return queries;
 };
 

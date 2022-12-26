@@ -127,20 +127,83 @@ a.btn {
   flex-wrap: wrap;
 }
 
-.main-filter .beautiful-input-item label {
+.beautiful-uploader-item label,
+.beautiful-input-item label {
   font-size: var(--small-text);
   font-weight: bold;
   color: var(--black-color);
 }
 
-.beautiful-input-item {
+.main-filter .beautiful-input-item {
   min-width: 150px;
   max-width: 200px;
 }
 
-.beautiful-input-item.w-lg {
+.main-filter .beautiful-input-item.w-lg {
   min-width: 350px;
   max-width: 450px;
+}
+
+.fancy-checkbox-item {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+input[type="checkbox"].fancy-checkbox {
+  display: none;
+}
+
+input[type="checkbox"].fancy-checkbox + label {
+  background-color: var(--light-color);
+  border-radius: 30px;
+  min-width: 60px;
+  min-height: 30px;
+  box-shadow: inset 0 0 4px rgb(0 0 0 / 19%);
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition);
+}
+
+input[type="checkbox"].fancy-checkbox + label .bullet {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: var(--transition);
+}
+
+input[type="checkbox"].fancy-checkbox:checked + label {
+  background-color: var(--primary-color);
+}
+
+input[type="checkbox"].fancy-checkbox:checked + label .bullet {
+  background-color: var(--white-color);
+  left: initial;
+  right: 3px;
+}
+
+.beautiful-uploader-item label.design {
+  border: 4px dashed var(--primary-opacity-color);
+  background-color: var(--primary-color);
+  width: 100%;
+  height: 100px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.beautiful-uploader-item input {
+  display: none;
 }
 
 /* SIGNUP & LOGIN */
@@ -342,6 +405,7 @@ main {
 .main-content {
   margin-top: var(--header-height);
   padding: 10px;
+  min-height: calc(100vh - (var(--header-height) * 2));
 }
 
 .page-head {
@@ -416,4 +480,10 @@ thead th.active {
   background-color: var(--primary-opacity-color);
   border-color: var(--primary-opacity-color);
   color: var(--white-color) !important;
+}
+
+/* ============================== CREATE USER PAGE ============================== */
+.create-user-page form {
+  width: 70%;
+  margin: auto;
 }

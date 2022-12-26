@@ -18,10 +18,16 @@ const Login = ({ sidebarIsOpen }) => {
   const handleChange = ({ currentTarget }) => {
     setFormData({ ...formData, [currentTarget.name]: currentTarget.value });
   };
+<<<<<<< HEAD
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // destrucring values from the object
+=======
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+>>>>>>> be34d1987a9e92084d5d52075c2b6175609fc4f4
     const { email, password } = formData;
 
     // Validation in frontend
@@ -33,6 +39,7 @@ const Login = ({ sidebarIsOpen }) => {
      * password min 8 char
      */
 
+<<<<<<< HEAD
     if (!email.match(emailValidation)) {
       toast.error("Please Insert a valid  email");
       return;
@@ -45,6 +52,13 @@ const Login = ({ sidebarIsOpen }) => {
       return
     }
      else {
+=======
+    if (!email) {
+      toast.error("Please provide the email");
+    } else if (!password) {
+      toast.error("Please provide the password");
+    } else {
+>>>>>>> be34d1987a9e92084d5d52075c2b6175609fc4f4
       dispatch(updateState({ isLoading: true }));
       dispatch(login(formData));
     }

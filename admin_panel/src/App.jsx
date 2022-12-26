@@ -1,4 +1,10 @@
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
@@ -7,52 +13,65 @@ import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
-import Users from "./pages/Users";
+import Users from "./pages/users/Users";
 import Login from "./pages/auth/Login";
 import Error404 from "./pages/errors/Error404";
-import { protect, resetState } from "./store/auth/actions";
+import { protect, resetAuthState } from "./store/auth/actions";
+import CreateUser from "./pages/users/CreateUser";
 
 function App() {
-  // protect routes
   const dispatch = useDispatch();
-  const { user, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.auth
-  );
-  const [loading, setLoading] = useState(true);
+  const { pathname } = useLocation();
+  const {
+    user,
+    isLoading: isAuthLoading,
+    isSuccess: isAuthSuccess,
+    isError: isAuthError,
+    message: messageAuth,
+  } = useSelector((state) => state.auth);
+  const [loadingPage, setLoadingPage] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // if no token in localStorage navigate to the login page
     if (!user.token) {
       navigate("/login");
     }
   }, [user, navigate]);
 
   useEffect(() => {
-    setLoading(false);
+    // Loading page in reload
+    setLoadingPage(false);
     dispatch(protect());
-  }, [dispatch]);
+  }, [dispatch, pathname]);
 
+  // Show toast messages in login based on if the authentication process success or not
   useEffect(() => {
-    if (isSuccess) {
-      toast.success(message);
+    if (isAuthSuccess) {
+      toast.success(messageAuth);
+    }
+    if (isAuthError) {
+      toast.error(messageAuth);
     }
 
-    if (isError) {
-      toast.error(message);
-    }
-
-    dispatch(resetState());
-  }, [isSuccess, isError, dispatch, message]);
+    /**
+     * Reset auth state to default to remove the current message after showing it
+     * set (isAuthSuccess, isAuthError, isAuthSuccess) to false
+     */
+    dispatch(resetAuthState());
+  }, [isAuthSuccess, isAuthError, dispatch, messageAuth]);
 
   // Sidebar settings
   const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
 
+  // Get the sidebar status from localStorage and set it
   useState(() => {
     const isOpenInLocalStorage = localStorage.getItem("sidebarIsOpen")
       ? JSON.parse(localStorage.getItem("sidebarIsOpen"))
       : sidebarIsOpen;
     setSidebarIsOpen(isOpenInLocalStorage);
 
+    // Remove ( sidebar-open class) which adds a big padding-left in the body if the sidebar is open
     if (!isOpenInLocalStorage) {
       document.querySelector("body").classList.remove("sidebar-open");
     } else {
@@ -60,7 +79,8 @@ function App() {
     }
   }, []);
 
-  if (isLoading || loading) {
+  // Show spinner if any page is loading or in the authentication process (login)
+  if (isAuthLoading || loadingPage) {
     return (
       <div className="" style={{ position: "fixed", left: "50%", top: "50%" }}>
         <div
@@ -86,7 +106,10 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="users">
+            <Route index element={<Users />} />
+            <Route path="create" element={<CreateUser />} />
+          </Route>
           <Route
             path="/login"
             element={<Login sidebarIsOpen={sidebarIsOpen} />}

@@ -4,14 +4,16 @@ import { authReducer } from "./auth/reducer";
 import { usersReducer } from "./users/reducer";
 import { paginationReducer } from "./pagination/reducer";
 import { filterReducer } from "./filter/reducer";
-import { modalReducer } from "./modal/reducer";
+import { deleteModalReducer } from "./modals/delete/reducer";
+import { settingsReducer } from "./settings/reducer";
 
 const appReducer = combineReducers({
   auth: authReducer,
   users: usersReducer,
   paginationData: paginationReducer,
   mainFilterData: filterReducer,
-  modalState: modalReducer,
+  deleteModalData: deleteModalReducer,
+  siteSettings: settingsReducer,
 });
 
 export const store = createStore(appReducer, applyMiddleware(thunk));
