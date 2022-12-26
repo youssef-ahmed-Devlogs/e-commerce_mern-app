@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login, updateState } from "../../store/auth/actions";
-const emailValidation = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const Login = ({ sidebarIsOpen }) => {
   const [formData, setFormData] = useState({
@@ -18,16 +17,9 @@ const Login = ({ sidebarIsOpen }) => {
   const handleChange = ({ currentTarget }) => {
     setFormData({ ...formData, [currentTarget.name]: currentTarget.value });
   };
-<<<<<<< HEAD
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // destrucring values from the object
-=======
 
   const handleSubmit = async (e) => {
     e.preventDefault();
->>>>>>> be34d1987a9e92084d5d52075c2b6175609fc4f4
     const { email, password } = formData;
 
     // Validation in frontend
@@ -39,26 +31,11 @@ const Login = ({ sidebarIsOpen }) => {
      * password min 8 char
      */
 
-<<<<<<< HEAD
-    if (!email.match(emailValidation)) {
-      toast.error("Please Insert a valid  email");
-      return;
-    }
-     else if (password.length < 5) {
-      toast.error("Please enter a valid password");
-      return;
-    } else if(password.length > 20) {
-      toast.error("password must be less than 20")
-      return
-    }
-     else {
-=======
     if (!email) {
       toast.error("Please provide the email");
     } else if (!password) {
       toast.error("Please provide the password");
     } else {
->>>>>>> be34d1987a9e92084d5d52075c2b6175609fc4f4
       dispatch(updateState({ isLoading: true }));
       dispatch(login(formData));
     }
@@ -95,7 +72,6 @@ const Login = ({ sidebarIsOpen }) => {
               <label htmlFor="email">Email</label>
 
               <input
-              
                 type="email"
                 className="form-control"
                 name="email"
