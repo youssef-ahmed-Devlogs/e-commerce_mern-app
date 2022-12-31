@@ -15,6 +15,7 @@ import DeleteModal from "../../components/modals/DeleteModal";
 const Users = (props) => {
   // Data
   const users = useSelector((state) => state.users);
+
   // Dispatch
   const dispatch = useDispatch();
   // Pagination State
@@ -92,7 +93,10 @@ const Users = (props) => {
       <tr key={user.id}>
         <th scope="row">{index + 1}</th>
         <td>
-          <img src={`/storage/users/${user.photo}`} alt="username" />
+          <img
+            src={`${process.env.REACT_APP_STORAGE_URL}/users/${user.photo}`}
+            alt="username"
+          />
         </td>
         <td>{user.fullName}</td>
         <td>{user.username}</td>
@@ -102,7 +106,10 @@ const Users = (props) => {
         <td>{user.role.toUpperCase()}</td>
         <td>{beautifulDate(user.createdAt)}</td>
         <td>
-          <Link to="/users/edit" className="btn btn-sm btn-success me-1">
+          <Link
+            to={`/users/edit/${user._id}`}
+            className="btn btn-sm btn-success me-1"
+          >
             <FaPen className="me-1" />
             Edit
           </Link>

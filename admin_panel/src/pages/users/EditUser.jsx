@@ -1,19 +1,18 @@
+import axios from "axios";
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
-import { ProgressBar } from "react-bootstrap";
-import { FaArrowLeft, FaPlusSquare } from "react-icons/fa";
+import { FaArrowLeft, FaUserEdit, FaUserLock } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import BeautifulInput from "../../components/BeautifulInput";
 import BeautifulSelect from "../../components/BeautifulSelect";
 import BeautifulUploader from "../../components/BeautifulUploader";
 import FancyCheckbox from "../../components/FancyCheckbox";
-import Validator from "../../helpers/Validator";
 import { handleBackAuto } from "../../store/settings/actions";
-import { createUser } from "../../store/users/actions";
+import { updateUser, updateUserPassword } from "../../store/users/actions";
 
-function CreateUser() {
+function EditUser() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -28,26 +27,44 @@ function CreateUser() {
     status: "1",
   });
 
-  const resetState = () => {
-    setFormData({
-      firstName: "",
-      lastName: "",
-      username: "",
-      email: "",
-      password: "",
-      passwordConfirm: "",
-      phone: "",
-      photo: "",
-      role: "user",
-      status: "1",
-    });
-  };
+  const [userImage, setUserImage] = useState("");
 
-  const [errors, setErrors] = useState({});
-
+  const { userId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { backAfterSubmit } = useSelector((state) => state.siteSettings);
+
+  const fetchUser = async (userId) => {
+    const loggedInUser = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : {};
+
+    const token = loggedInUser && loggedInUser.token && loggedInUser.token;
+
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const user = data.data;
+
+    setFormData({
+      ...formData,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      status: user.status,
+    });
+
+    setUserImage(user.photo);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -61,42 +78,48 @@ function CreateUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validator = new Validator(formData);
-
-    const validatorErrors = validator
-      .setValidation({
-        firstName: ["required"],
-        lastName: ["required"],
-        username: ["required"],
-        email: ["required"],
-        password: ["required"],
-        passwordConfirm: ["required"],
-        phone: ["required"],
-        photo: ["image"],
-      })
-      .setMessages({
-        firstName: "first name is required",
-        lastName: "last name is required",
-      })
-      .prepare()
-      .getObjectErrors();
-
-    console.log(validator);
-
-    setErrors(validatorErrors);
-
     // Validation
-    if (Object.keys(validatorErrors).length == 0) {
-      dispatch(createUser(formData, navigate, setUploadProgress));
-      resetState();
+    if (false) {
+    } else {
+      dispatch(
+        updateUser(userId, {
+          formData,
+          navigate,
+          setUploadProgress,
+          update: () => {
+            fetchUser(userId);
+          },
+        })
+      );
     }
   };
+
+  const handleSubmitPassword = (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (false) {
+    } else {
+      dispatch(
+        updateUserPassword(userId, {
+          formData,
+          update: () => {
+            setFormData({ ...formData, password: "", passwordConfirm: "" });
+          },
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchUser(userId);
+  }, []);
 
   return (
     <>
       <div className="main-content create-user-page">
         <div className="d-flex align-items-center justify-content-between">
-          <h1 className="page-head">Create New User</h1>
+          <h1 className="page-head">Edit User</h1>
 
           <div className="d-flex align-items-center justify-content-between gap-3">
             <FancyCheckbox
@@ -115,6 +138,17 @@ function CreateUser() {
 
         <form onSubmit={handleSubmit}>
           <div className="row">
+            {userImage && (
+              <div className="col-xl-3 my-3">
+                <img
+                  src={`${process.env.REACT_APP_STORAGE_URL}/users/${userImage}`}
+                  alt=""
+                  className="w-100 rounded"
+                />
+              </div>
+            )}
+          </div>
+          <div className="row">
             <div className="col-xl-6">
               <BeautifulInput
                 label={{ text: "First Name", for: "firstName" }}
@@ -124,9 +158,6 @@ function CreateUser() {
                 onChange={handleChange}
                 value={formData.firstName}
               />
-              {errors && (
-                <small className="text-danger">{errors["firstName"]}</small>
-              )}
             </div>
 
             <div className="col-xl-6">
@@ -174,28 +205,6 @@ function CreateUser() {
             </div>
 
             <div className="col-xl-6">
-              <BeautifulInput
-                label={{ text: "Password", for: "password" }}
-                type="password"
-                id="password"
-                placeholder="Password"
-                onChange={handleChange}
-                value={formData.password}
-              />
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulInput
-                label={{ text: "Password Confirm", for: "passwordConfirm" }}
-                type="password"
-                id="passwordConfirm"
-                placeholder="Password Confirm"
-                onChange={handleChange}
-                value={formData.passwordConfirm}
-              />
-            </div>
-
-            <div className="col-xl-6">
               <BeautifulSelect
                 label={{ text: "Role", for: "role" }}
                 type="text"
@@ -234,9 +243,40 @@ function CreateUser() {
             />
           </div>
 
-          <button className="btn btn-primary mt-2 d-flex align-items-center gap-2">
-            <FaPlusSquare />
-            Create
+          <button className="btn btn-success mt-2 d-flex align-items-center gap-2">
+            <FaUserEdit />
+            Update
+          </button>
+        </form>
+
+        <form onSubmit={handleSubmitPassword} className="mt-5">
+          <div className="row">
+            <div className="col-xl-6">
+              <BeautifulInput
+                label={{ text: "Password", for: "password" }}
+                type="password"
+                id="password"
+                placeholder="Password"
+                onChange={handleChange}
+                value={formData.password}
+              />
+            </div>
+
+            <div className="col-xl-6">
+              <BeautifulInput
+                label={{ text: "Password Confirm", for: "passwordConfirm" }}
+                type="password"
+                id="passwordConfirm"
+                placeholder="Password Confirm"
+                onChange={handleChange}
+                value={formData.passwordConfirm}
+              />
+            </div>
+          </div>
+
+          <button className="btn btn-secondary mt-2 d-flex align-items-center gap-2">
+            <FaUserLock />
+            Update Password
           </button>
         </form>
       </div>
@@ -244,4 +284,4 @@ function CreateUser() {
   );
 }
 
-export default CreateUser;
+export default EditUser;

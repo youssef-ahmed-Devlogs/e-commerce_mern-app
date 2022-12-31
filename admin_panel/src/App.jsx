@@ -18,6 +18,7 @@ import Login from "./pages/auth/Login";
 import Error404 from "./pages/errors/Error404";
 import { protect, resetAuthState } from "./store/auth/actions";
 import CreateUser from "./pages/users/CreateUser";
+import EditUser from "./pages/users/EditUser";
 
 function App() {
   const dispatch = useDispatch();
@@ -109,6 +110,7 @@ function App() {
           <Route path="users">
             <Route index element={<Users />} />
             <Route path="create" element={<CreateUser />} />
+            <Route path="edit/:userId" element={<EditUser />} />
           </Route>
           <Route
             path="/login"

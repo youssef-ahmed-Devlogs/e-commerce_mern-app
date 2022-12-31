@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "/api/v1";
-const URL = `${BASE_URL}/users`;
+const URL = `${process.env.REACT_APP_API_URL}/users`;
 
 export const LOGIN = "LOGIN";
 export const UPDATE_STATE = "UPDATE_STATE";

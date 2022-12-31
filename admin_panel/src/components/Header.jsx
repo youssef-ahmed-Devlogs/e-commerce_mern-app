@@ -44,7 +44,7 @@ const Header = ({ sidebarIsOpen, setSidebarIsOpen }) => {
           <div className="username">{loggedInUser.fullName}</div>
           <div className="photo">
             <img
-              src={`http://localhost:8000/storage/users/${loggedInUser.photo}`}
+              src={`${process.env.REACT_APP_STORAGE_URL}/users/${loggedInUser.photo}`}
               alt={loggedInUser.fullName}
             />
           </div>

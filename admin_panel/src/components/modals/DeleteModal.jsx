@@ -20,7 +20,7 @@ function DeleteModal() {
 
     // Delete in server
     try {
-      const url = `/api/v1/${data.resourceName}/${data.id}`;
+      const url = `${process.env.REACT_APP_API_URL}/${data.resourceName}/${data.id}`;
       const config = {
         headers: {
           Authorization: `Bearer ${loggedInUser.token}`,
