@@ -9,6 +9,8 @@ import BeautifulInput from "../../components/BeautifulInput";
 import BeautifulSelect from "../../components/BeautifulSelect";
 import BeautifulUploader from "../../components/BeautifulUploader";
 import FancyCheckbox from "../../components/FancyCheckbox";
+import updateUserValidation from "../../helpers/validation/updateUserValidation";
+import Validator from "../../helpers/Validator";
 import { handleBackAuto } from "../../store/settings/actions";
 import { updateUser, updateUserPassword } from "../../store/users/actions";
 
@@ -30,6 +32,7 @@ function EditUser() {
   const [userImage, setUserImage] = useState("");
 
   const { userId } = useParams();
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { backAfterSubmit } = useSelector((state) => state.siteSettings);
@@ -78,9 +81,15 @@ function EditUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation
-    if (false) {
-    } else {
+    // Validation update form only without passwords
+    const formUpdate = { ...formData };
+    delete formUpdate.password;
+    delete formUpdate.passwordConfirm;
+
+    const validatorErrors = updateUserValidation(formUpdate);
+    setErrors(validatorErrors);
+
+    if (Object.keys(validatorErrors).length === 0) {
       dispatch(
         updateUser(userId, {
           formData,
@@ -97,9 +106,34 @@ function EditUser() {
   const handleSubmitPassword = (e) => {
     e.preventDefault();
 
+    const { password, passwordConfirm } = formData;
+
+    const validator = new Validator({ password, passwordConfirm });
+    const validatorErrors = validator
+      .setValidation({
+        password: ["required", "min:8", "max:50"],
+        passwordConfirm: ["required", "match:password", "min:8", "max:50"],
+      })
+      .setMessages({
+        password: {
+          required: "password is required",
+          min: "password must be grater than 8 characters.",
+          max: "password must be less than 50 characters.",
+        },
+        passwordConfirm: {
+          required: "password confirm is required",
+          match: "passwords are not the same.",
+          min: "password confirm must be grater than 8 characters.",
+          max: "password confirm must be less than 50 characters.",
+        },
+      })
+      .prepare()
+      .getObjectErrors();
+
+    setErrors(validatorErrors);
+
     // Validation
-    if (false) {
-    } else {
+    if (Object.keys(validatorErrors).length === 0) {
       dispatch(
         updateUserPassword(userId, {
           formData,
@@ -157,6 +191,7 @@ function EditUser() {
                 placeholder="First Name"
                 onChange={handleChange}
                 value={formData.firstName}
+                errors={errors}
               />
             </div>
 
@@ -168,6 +203,7 @@ function EditUser() {
                 placeholder="Last Name"
                 onChange={handleChange}
                 value={formData.lastName}
+                errors={errors}
               />
             </div>
 
@@ -179,6 +215,7 @@ function EditUser() {
                 placeholder="Username"
                 onChange={handleChange}
                 value={formData.username}
+                errors={errors}
               />
             </div>
 
@@ -190,6 +227,7 @@ function EditUser() {
                 placeholder="Email"
                 onChange={handleChange}
                 value={formData.email}
+                errors={errors}
               />
             </div>
 
@@ -201,6 +239,7 @@ function EditUser() {
                 placeholder="Phone"
                 onChange={handleChange}
                 value={formData.phone}
+                errors={errors}
               />
             </div>
 
@@ -212,6 +251,7 @@ function EditUser() {
                 placeholder="Role"
                 onChange={handleChange}
                 value={formData.role}
+                errors={errors}
               >
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
@@ -226,6 +266,7 @@ function EditUser() {
                 placeholder="Status"
                 onChange={handleChange}
                 value={formData.status}
+                errors={errors}
               >
                 <option value="1">Active</option>
                 <option value="2">Disabled</option>
@@ -240,6 +281,7 @@ function EditUser() {
               id="photo"
               onChange={handleUpload}
               uploadprogress={uploadProgress}
+              errors={errors}
             />
           </div>
 
@@ -259,6 +301,7 @@ function EditUser() {
                 placeholder="Password"
                 onChange={handleChange}
                 value={formData.password}
+                errors={errors}
               />
             </div>
 
@@ -270,6 +313,7 @@ function EditUser() {
                 placeholder="Password Confirm"
                 onChange={handleChange}
                 value={formData.passwordConfirm}
+                errors={errors}
               />
             </div>
           </div>

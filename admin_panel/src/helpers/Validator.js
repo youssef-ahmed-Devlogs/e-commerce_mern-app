@@ -90,11 +90,11 @@ class Validator extends ValidatorWorker {
   }
 
   required(field) {
-    if (this.data[field] == "") this.sendMessage(field, "required");
+    if (this.data[field] === "") this.sendMessage(field, "required");
   }
 
   match(field, matchField) {
-    if (this.data[field].trim() != this.data[matchField].trim())
+    if (this.data[field].trim() !== this.data[matchField].trim())
       this.sendMessage(field, "match");
   }
 
@@ -118,7 +118,7 @@ class Validator extends ValidatorWorker {
 
   image(field, extensions) {
     const type =
-      this.data[field].type != "" ? this.data[field].type : "null/null";
+      this.data[field].type !== "" ? this.data[field].type : "null/null";
 
     const ext = type?.split("/")[1];
     if (ext && !extensions.includes(ext)) this.sendMessage(field, "image");
@@ -132,7 +132,8 @@ class Validator extends ValidatorWorker {
   }
 
   enum(field, params) {
-    if (!params.includes(this.data[field])) this.sendMessage(field, "enum");
+    const check = `${this.data[field]}`;
+    if (!params.includes(check)) this.sendMessage(field, "enum");
   }
 }
 

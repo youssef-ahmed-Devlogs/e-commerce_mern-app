@@ -63,8 +63,8 @@ function CreateUser() {
     const validatorErrors = storeUserValidation(formData);
     setErrors(validatorErrors);
 
-    if (Object.keys(validatorErrors).length == 0) {
-      dispatch(createUser(formData, navigate, setUploadProgress));
+    if (Object.keys(validatorErrors).length === 0) {
+      dispatch(createUser(formData, { navigate, setUploadProgress }));
       resetState();
     }
   };

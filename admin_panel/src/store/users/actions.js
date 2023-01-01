@@ -53,7 +53,7 @@ export const createUser = (formData, options) => {
         const formDataObj = new FormData();
 
         for (let key in formData) {
-          if (formData[key] == "") {
+          if (formData[key] === "") {
             continue;
           }
           formDataObj.append(key, formData[key]);
@@ -68,7 +68,7 @@ export const createUser = (formData, options) => {
               ); // (200 / 400 * 100) = 50%
               setUploadProgress(progressNow);
 
-              if (progressNow == 100) {
+              if (progressNow === 100) {
                 setTimeout(() => {
                   setUploadProgress(0);
                 }, 1000);
@@ -109,14 +109,12 @@ export const updateUser = (userId, options) => {
     const { formData, navigate, setUploadProgress, update } = options;
     const api_options = apiOptions();
 
-    console.log(formData);
-
     try {
       if (api_options !== "noToken") {
         const formDataObj = new FormData();
 
         for (let key in formData) {
-          if (formData[key] == "") {
+          if (formData[key] === "") {
             continue;
           }
           formDataObj.append(key, formData[key]);
@@ -132,7 +130,7 @@ export const updateUser = (userId, options) => {
 
               setUploadProgress(progressNow);
 
-              if (progressNow == 100) {
+              if (progressNow === 100) {
                 setTimeout(() => {
                   setUploadProgress(0);
                 }, 1000);
