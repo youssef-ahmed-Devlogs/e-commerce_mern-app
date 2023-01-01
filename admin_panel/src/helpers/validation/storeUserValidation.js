@@ -10,38 +10,58 @@ const storeUserValidation = (formData) => {
       username: ["required", "min:3", "max:10"],
       email: ["required", "email"],
       password: ["required", "min:8", "max:50"],
-      passwordConfirm: ["required", "min:8", "max:50"],
+      passwordConfirm: ["required", "match:password", "min:8", "max:50"],
       phone: ["required", "min:11", "max:11"],
-      photo: ["image:jpeg,png", "size:1000"],
-      role: ["required", "enum:2,4,2"],
-      status: ["required", "enum:2,1,4"],
+      photo: ["image:jpeg,png ", "size:2048"],
+      role: ["required", "enum:user,admin"],
+      status: ["required", "enum:1,2,3"],
     })
     .setMessages({
       firstName: {
-        require: "first name is required",
-        min: "first name must be grater than 8 characters.",
+        required: "first name is required",
+        min: "first name must be grater than 3 characters.",
         max: "first name must be less than 10 characters.",
       },
       lastName: {
-        require: "last name is required",
+        required: "last name is required",
       },
       username: {
-        require: "username is required",
+        required: "username is required",
+        min: "username must be grater than 3 characters.",
+        max: "username must be less than 10 characters.",
       },
       email: {
-        require: "email is required",
+        required: "email is required",
         email: "please provide a valid email.",
       },
       password: {
-        require: "password is required",
+        required: "password is required",
+        min: "password must be grater than 8 characters.",
+        max: "password must be less than 50 characters.",
       },
       passwordConfirm: {
-        require: "password confirm is required",
+        required: "password confirm is required",
+        match: "passwords are not the same.",
+        min: "password confirm must be grater than 8 characters.",
+        max: "password confirm must be less than 50 characters.",
       },
-      phone: { require: "phone is required" },
-      photo: { require: "last name is required" },
-      role: { require: "role is required" },
-      status: { require: "status is required" },
+      phone: {
+        required: "phone is required",
+        min: "phone must be grater than 11 characters.",
+        max: "phone must be less than 11 characters.",
+      },
+      photo: {
+        image: "Please provide a valid image (jpg, jpeg, png).",
+        size: "Max size is 2048KB.",
+      },
+      role: {
+        required: "role is required",
+        enum: "role value must be in (user, admin)",
+      },
+      status: {
+        required: "status is required",
+        enum: "status value must be in (active, disabled, banned)",
+      },
     })
     .prepare()
     .getObjectErrors();

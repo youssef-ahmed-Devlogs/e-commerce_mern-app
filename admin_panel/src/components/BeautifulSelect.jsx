@@ -12,7 +12,7 @@ function BeautifulSelect(props) {
       </select>
 
       {errors && errors[label.for] && (
-        <small className="text-danger">{errors[label.for]}</small>
+        <small className="text-danger fw-bold">{errors[label.for]}</small>
       )}
     </div>
   );

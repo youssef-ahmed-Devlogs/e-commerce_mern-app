@@ -59,10 +59,10 @@ function CreateUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validation
     const validatorErrors = storeUserValidation(formData);
     setErrors(validatorErrors);
 
-    // Validation
     if (Object.keys(validatorErrors).length == 0) {
       dispatch(createUser(formData, navigate, setUploadProgress));
       resetState();
@@ -216,6 +216,7 @@ function CreateUser() {
               id="photo"
               onChange={handleUpload}
               uploadprogress={uploadProgress}
+              errors={errors}
             />
           </div>
 

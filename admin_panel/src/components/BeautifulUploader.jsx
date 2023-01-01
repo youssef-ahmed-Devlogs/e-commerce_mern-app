@@ -2,7 +2,7 @@ import { ProgressBar } from "react-bootstrap";
 
 function BeautifulUploader(props) {
   // width= w-xl, w-lg, w-md, w-sm
-  const { label, width, uploadprogress } = props;
+  const { label, errors, width, uploadprogress } = props;
 
   return (
     <div className={`beautiful-uploader-item ${width ? width : ""}`}>
@@ -14,6 +14,10 @@ function BeautifulUploader(props) {
 
       {uploadprogress > 0 && (
         <ProgressBar now={uploadprogress} label={`${uploadprogress}%`} />
+      )}
+
+      {errors && errors[label.for] && (
+        <small className="text-danger fw-bold">{errors[label.for]}</small>
       )}
     </div>
   );
