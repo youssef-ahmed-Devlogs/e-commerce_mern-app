@@ -1,15 +1,13 @@
 import React from "react";
 import { useState } from "react";
-import { ProgressBar } from "react-bootstrap";
 import { FaArrowLeft, FaPlusSquare } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import BeautifulInput from "../../components/BeautifulInput";
 import BeautifulSelect from "../../components/BeautifulSelect";
 import BeautifulUploader from "../../components/BeautifulUploader";
 import FancyCheckbox from "../../components/FancyCheckbox";
-import Validator from "../../helpers/Validator";
+import storeUserValidation from "../../helpers/validation/storeUserValidation";
 import { handleBackAuto } from "../../store/settings/actions";
 import { createUser } from "../../store/users/actions";
 
@@ -61,28 +59,7 @@ function CreateUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validator = new Validator(formData);
-
-    const validatorErrors = validator
-      .setValidation({
-        firstName: ["required"],
-        lastName: ["required"],
-        username: ["required"],
-        email: ["required"],
-        password: ["required"],
-        passwordConfirm: ["required"],
-        phone: ["required"],
-        photo: ["image"],
-      })
-      .setMessages({
-        firstName: "first name is required",
-        lastName: "last name is required",
-      })
-      .prepare()
-      .getObjectErrors();
-
-    console.log(validator);
-
+    const validatorErrors = storeUserValidation(formData);
     setErrors(validatorErrors);
 
     // Validation
@@ -123,10 +100,8 @@ function CreateUser() {
                 placeholder="First Name"
                 onChange={handleChange}
                 value={formData.firstName}
+                errors={errors}
               />
-              {errors && (
-                <small className="text-danger">{errors["firstName"]}</small>
-              )}
             </div>
 
             <div className="col-xl-6">
@@ -137,6 +112,7 @@ function CreateUser() {
                 placeholder="Last Name"
                 onChange={handleChange}
                 value={formData.lastName}
+                errors={errors}
               />
             </div>
 
@@ -148,6 +124,7 @@ function CreateUser() {
                 placeholder="Username"
                 onChange={handleChange}
                 value={formData.username}
+                errors={errors}
               />
             </div>
 
@@ -159,6 +136,7 @@ function CreateUser() {
                 placeholder="Email"
                 onChange={handleChange}
                 value={formData.email}
+                errors={errors}
               />
             </div>
 
@@ -170,6 +148,7 @@ function CreateUser() {
                 placeholder="Phone"
                 onChange={handleChange}
                 value={formData.phone}
+                errors={errors}
               />
             </div>
 
@@ -181,6 +160,7 @@ function CreateUser() {
                 placeholder="Password"
                 onChange={handleChange}
                 value={formData.password}
+                errors={errors}
               />
             </div>
 
@@ -192,6 +172,7 @@ function CreateUser() {
                 placeholder="Password Confirm"
                 onChange={handleChange}
                 value={formData.passwordConfirm}
+                errors={errors}
               />
             </div>
 
@@ -203,7 +184,9 @@ function CreateUser() {
                 placeholder="Role"
                 onChange={handleChange}
                 value={formData.role}
+                errors={errors}
               >
+                <option value="">Select Role</option>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </BeautifulSelect>
@@ -217,7 +200,9 @@ function CreateUser() {
                 placeholder="Status"
                 onChange={handleChange}
                 value={formData.status}
+                errors={errors}
               >
+                <option value="">Select Status</option>
                 <option value="1">Active</option>
                 <option value="2">Disabled</option>
                 <option value="3">Banned</option>

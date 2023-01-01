@@ -1,5 +1,5 @@
 function BeautifulSelect(props) {
-  const { label } = props;
+  const { label, errors } = props;
 
   return (
     <div className="beautiful-input-item">
@@ -10,6 +10,10 @@ function BeautifulSelect(props) {
       >
         {props.children}
       </select>
+
+      {errors && errors[label.for] && (
+        <small className="text-danger">{errors[label.for]}</small>
+      )}
     </div>
   );
 }

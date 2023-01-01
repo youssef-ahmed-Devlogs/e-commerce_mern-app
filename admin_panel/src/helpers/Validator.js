@@ -30,36 +30,68 @@ class Validator {
     let [min, minSize] = extractMin != undefined ? extractMin.split(":") : "";
     // ========================================================================
 
-    if (errorTypes.includes("required")) this.required(field);
     if (max && maxSize) this.max(field, maxSize);
     if (min && minSize) this.min(field, minSize);
+    if (errorTypes.includes("email")) this.email(field);
+    if (errorTypes.includes("required")) this.required(field);
   }
 
   required(field) {
-    if (this.data[field] == "")
+    if (this.data[field] == "") {
       this.errors.push(
-        this.messages[field] ? this.messages[field] : "No Message"
+        this?.messages[field]?.require
+          ? this?.messages[field]?.require
+          : "No Message"
       );
 
-    this.objectErrors[field] = this.messages[field]
-      ? this.messages[field]
-      : "No Message";
+      this.objectErrors[field] = this?.messages[field]?.require
+        ? this?.messages[field]?.require
+        : "No Message";
+    }
   }
 
   max(field, size = 255) {
-    console.log("====================================");
-    console.log("max", field);
-    console.log("====================================");
+    if (this.data[field].length > size) {
+      this.errors.push(
+        this?.messages[field]?.max ? this?.messages[field]?.max : "No Message"
+      );
+
+      this.objectErrors[field] = this?.messages[field]?.max
+        ? this?.messages[field]?.max
+        : "No Message";
+    }
   }
 
   min(field, size = 5) {
-    console.log("====================================");
-    console.log("min", field);
-    console.log("====================================");
+    if (this.data[field].length < size) {
+      this.errors.push(
+        this?.messages[field]?.min ? this?.messages[field]?.min : "No Message"
+      );
+
+      this.objectErrors[field] = this?.messages[field]?.min
+        ? this?.messages[field]?.min
+        : "No Message";
+    }
   }
 
-  fieldName(name) {
-    return;
+  email(field) {
+    const validateEmail = String(this.data[field])
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+
+    if (!validateEmail) {
+      this.errors.push(
+        this?.messages[field]?.email
+          ? this?.messages[field]?.email
+          : "No Message"
+      );
+
+      this.objectErrors[field] = this?.messages[field]?.email
+        ? this?.messages[field]?.email
+        : "No Message";
+    }
   }
 
   setValidation(validation) {
