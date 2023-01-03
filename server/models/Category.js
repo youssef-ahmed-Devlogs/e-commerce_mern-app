@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
   slug: String,
   cover: {
     type: String,
-    default: "default.jpg",
+    default: "default.jpeg",
   },
   createdBy: {
     type: mongoose.Types.ObjectId,

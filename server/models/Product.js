@@ -40,10 +40,10 @@ const schema = new mongoose.Schema({
 schema.pre(/^find/, function (next) {
   this.populate({
     path: "categories",
-    select: "title -_id",
+    select: "title",
   }).populate({
     path: "createdBy",
-    select: "username -_id",
+    select: "username",
   });
   next();
 });

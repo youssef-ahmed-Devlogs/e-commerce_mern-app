@@ -9,11 +9,11 @@ import MainFilters from "../../components/MainFilters";
 import { Link } from "react-router-dom";
 import { showDeleteModal } from "../../store/modals/delete/action";
 import DeleteModal from "../../components/modals/DeleteModal";
-import { fetchCategories } from "../../store/categories/actions";
+import { fetchProducts } from "../../store/products/actions";
 
-const Categories = (props) => {
+const Products = (props) => {
   // Data
-  const categories = useSelector((state) => state.categories);
+  const products = useSelector((state) => state.products);
 
   // Dispatch
   const dispatch = useDispatch();
@@ -23,8 +23,7 @@ const Categories = (props) => {
   const mainFilterData = useSelector((state) => state.mainFilterData);
   // Filter State
   const [filterData, setFilterData] = useState({
-    // role: "user",
-    // status: 1,
+    category: 123123123,
   });
 
   // resource is like (user, product, category) data.
@@ -37,9 +36,9 @@ const Categories = (props) => {
       "item";
     const deleteModalData = {
       id: resource._id,
-      resourceName: "categories",
+      resourceName: "products",
       itemName,
-      fetchResourceAction: fetchCategories,
+      fetchResourceAction: fetchProducts,
     };
     dispatch(showDeleteModal(deleteModalData));
   };
@@ -65,56 +64,70 @@ const Categories = (props) => {
      * - filter
      */
     const queries = parseQueries(queriesObject);
-    dispatch(fetchCategories(queries));
+    dispatch(fetchProducts(queries));
   }, [paginationData, mainFilterData, filterData, dispatch]);
+
+  const renderProductsCategories = (product) => {
+    if (product.categories.length) {
+      return product.categories.map((cat, i) =>
+        product.categories.length > i + 1 ? `${cat.title}, ` : cat.title
+      );
+    }
+
+    return "Not in category";
+  };
 
   /**
    * No params
    * @returns JSX ELEMENTS
    */
-  const renderCategories = () => {
-    return categories.data.map((category, index) => (
-      <tr key={category._id}>
-        <th scope="row">{index + 1}</th>
-        <td>
-          <img
-            src={`${process.env.REACT_APP_STORAGE_URL}/categories/${category.cover}`}
-            alt="category"
-          />
-        </td>
-        <td>{category.title}</td>
-        <td>{category?.description || "No description"}</td>
-        <td>{category.createdBy.username}</td>
-        <td>{beautifulDate(category.createdAt)}</td>
-        <td>
-          <Link
-            to={`/categories/edit/${category._id}`}
-            className="btn btn-sm btn-success me-1"
-          >
-            <FaPen className="me-1" />
-            Edit
-          </Link>
+  const renderProducts = () => {
+    return products.data.map((product, index) => {
+      return (
+        <tr key={product._id}>
+          <th scope="row">{index + 1}</th>
+          <td>
+            <img
+              src={`${process.env.REACT_APP_STORAGE_URL}/products/${product?.images[0]}`}
+              alt="product"
+            />
+          </td>
+          <td>{product.title}</td>
+          <td>${product.price}</td>
+          <td>{product?.description || "No description"}</td>
+          <td>{renderProductsCategories(product)}</td>
+          <td>{product.createdBy.username}</td>
+          <td>{beautifulDate(product.createdAt)}</td>
+          <td>
+            <Link
+              to={`/products/edit/${product._id}`}
+              className="btn btn-sm btn-success me-1"
+            >
+              <FaPen className="me-1" />
+              Edit
+            </Link>
 
-          <button
-            onClick={() => handleDelete(category)}
-            className="btn btn-sm btn-danger me-1"
-          >
-            <FaTrashAlt className="me-1" />
-            Delete
-          </button>
-        </td>
-      </tr>
-    ));
+            <button
+              onClick={() => handleDelete(product)}
+              className="btn btn-sm btn-danger me-1"
+            >
+              <FaTrashAlt className="me-1" />
+              Delete
+            </button>
+          </td>
+        </tr>
+      );
+    });
   };
 
   return (
-    <div className="main-content categories-page">
+    <div className="main-content products-page">
       <div className="d-flex align-items-center justify-content-between">
-        <h1 className="page-head">Categories</h1>
+        <h1 className="page-head">Products</h1>
 
         <div className="actions">
           <Link
-            to="/categories/create"
+            to="/products/create"
             className="btn btn-primary d-flex align-items-center gap-2"
           >
             <FaPlusSquare />
@@ -140,7 +153,7 @@ const Categories = (props) => {
                 >
                   #
                 </th>
-                <th scope="col">Cover</th>
+                <th scope="col">Image</th>
                 <th
                   scope="col"
                   onClick={() => dispatch(sortFilter("title"))}
@@ -150,12 +163,28 @@ const Categories = (props) => {
                 </th>
                 <th
                   scope="col"
+                  onClick={() => dispatch(sortFilter("price"))}
+                  className={mainFilterData.sort === "price" ? "active" : ""}
+                >
+                  Price
+                </th>
+                <th
+                  scope="col"
                   onClick={() => dispatch(sortFilter("description"))}
                   className={
                     mainFilterData.sort === "description" ? "active" : ""
                   }
                 >
                   Description
+                </th>
+                <th
+                  scope="col"
+                  onClick={() => dispatch(sortFilter("categories"))}
+                  className={
+                    mainFilterData.sort === "categories" ? "active" : ""
+                  }
+                >
+                  Categories
                 </th>
                 <th
                   scope="col"
@@ -178,10 +207,10 @@ const Categories = (props) => {
                 <th scope="col">Actions</th>
               </tr>
             </thead>
-            <tbody>{categories?.data && renderCategories()}</tbody>
+            <tbody>{products?.data && renderProducts()}</tbody>
           </table>
 
-          {categories?.data?.length === 0 && <p className="fw-bold">No Data</p>}
+          {products?.data?.length === 0 && <p className="fw-bold">No Data</p>}
         </div>
       </div>
 
@@ -189,9 +218,9 @@ const Categories = (props) => {
       <DeleteModal />
 
       {/* Pagination */}
-      <Pagination data={categories} />
+      <Pagination data={products} />
     </div>
   );
 };
 
-export default Categories;
+export default Products;

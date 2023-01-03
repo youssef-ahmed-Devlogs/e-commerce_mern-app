@@ -20,6 +20,10 @@ import { protect, resetAuthState } from "./store/auth/actions";
 import CreateUser from "./pages/users/CreateUser";
 import EditUser from "./pages/users/EditUser";
 import Categories from "./pages/categories/Categories";
+import CreateCategory from "./pages/categories/CreateCategory";
+import EditCategory from "./pages/categories/EditCategory";
+import Products from "./pages/products/Products";
+import CreateProduct from "./pages/products/CreateProduct";
 
 function App() {
   const dispatch = useDispatch();
@@ -115,6 +119,13 @@ function App() {
           </Route>
           <Route path="categories">
             <Route index element={<Categories />} />
+            <Route path="create" element={<CreateCategory />} />
+            <Route path="edit/:categoryId" element={<EditCategory />} />
+          </Route>
+          <Route path="products">
+            <Route index element={<Products />} />
+            <Route path="create" element={<CreateProduct />} />
+            <Route path="edit/:productId" element={<EditCategory />} />
           </Route>
           <Route
             path="/login"

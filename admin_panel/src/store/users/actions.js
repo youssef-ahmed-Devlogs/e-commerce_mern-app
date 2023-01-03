@@ -95,10 +95,6 @@ export const createUser = (formData, options) => {
       ) {
         toast.error(error.response.data.message);
       }
-
-      console.log("====================================");
-      console.log(error);
-      console.log("====================================");
       console.error("Error: createUser action");
     }
   };
@@ -160,10 +156,6 @@ export const updateUser = (userId, options) => {
       ) {
         toast.error(error.response.data.message);
       }
-
-      console.log("====================================");
-      console.log(error);
-      console.log("====================================");
       console.error("Error: updateUser action");
     }
   };
@@ -194,10 +186,6 @@ export const updateUserPassword = (userId, options) => {
       ) {
         toast.error(error.response.data.message);
       }
-
-      console.log("====================================");
-      console.log(error);
-      console.log("====================================");
       console.error("Error: updateUserPassword action");
     }
   };

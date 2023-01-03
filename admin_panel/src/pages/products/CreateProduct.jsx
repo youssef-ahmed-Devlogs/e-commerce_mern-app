@@ -1,78 +1,75 @@
-import axios from "axios";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { FaArrowLeft, FaUserEdit, FaUserLock } from "react-icons/fa";
+import { FaArrowLeft, FaPlusSquare } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BeautifulInput from "../../components/BeautifulInput";
+import BeautifulSelect from "../../components/BeautifulSelect";
 import BeautifulUploader from "../../components/BeautifulUploader";
 import FancyCheckbox from "../../components/FancyCheckbox";
 import Validator from "../../helpers/Validator";
-import { updateCategory } from "../../store/categories/actions";
+import {
+  createCategory,
+  fetchCategories,
+} from "../../store/categories/actions";
+import { createProduct } from "../../store/products/actions";
 import { handleBackAuto } from "../../store/settings/actions";
 
-function EditCategory() {
+function CreateProduct() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    cover: "",
+    price: "",
+    categories: [],
+    images: [],
   });
 
-  const [categoryCover, setCategoryCover] = useState("");
+  const resetState = () => {
+    setFormData({
+      title: "",
+      description: "",
+      price: "",
+      categories: [],
+      images: [],
+    });
+  };
 
-  const { categoryId } = useParams();
   const [errors, setErrors] = useState({});
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.data);
   const { backAfterSubmit } = useSelector((state) => state.siteSettings);
-
-  const fetchCategory = async (categoryId) => {
-    const loggedInUser = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user"))
-      : {};
-
-    const token = loggedInUser && loggedInUser.token && loggedInUser.token;
-
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/categories/${categoryId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const category = data.data;
-
-    setFormData({
-      ...formData,
-      title: category.title,
-      description: category.description,
-    });
-
-    setCategoryCover(category.cover);
-  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleCategoriesChange = (e) => {
+    console.log("====================================");
+    console.log(e.target.value);
+    console.log("====================================");
+    // setFormData({ ...formData, categories: e.target.value });
+  };
+
   const handleUpload = (e) => {
-    const cover = e.target.files[0];
-    setFormData({ ...formData, cover });
+    const images = e.target.files;
+    setFormData({ ...formData, images });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    console.log(formData);
     // Validation
     const validator = new Validator(formData);
     const validatorErrors = validator
       .setValidation({
         title: ["required", "min:2", "max:100"],
-        cover: ["image:png,jpeg,jpg", "size:2048"],
+        price: ["required", "min:1", "max:5"],
+        images: ["image:png,jpeg,jpg", "size:2048"],
       })
       .setMessages({
         title: {
@@ -80,7 +77,12 @@ function EditCategory() {
           min: "title must be grater than 2 characters.",
           max: "title must be less than 100 characters.",
         },
-        cover: {
+        price: {
+          required: "price is required.",
+          min: "price must be grater than 1 character.",
+          max: "price must be less than 5 characters.",
+        },
+        images: {
           image: "Please provide a valid image (jpg, jpeg, png).",
           size: "Max size is 2048KB.",
         },
@@ -91,28 +93,22 @@ function EditCategory() {
     setErrors(validatorErrors);
 
     if (Object.keys(validatorErrors).length === 0) {
-      dispatch(
-        updateCategory(categoryId, {
-          formData,
-          navigate,
-          setUploadProgress,
-          update: () => {
-            fetchCategory(categoryId);
-          },
-        })
-      );
+      dispatch(createProduct(formData, { navigate, setUploadProgress }));
+      resetState();
     }
   };
 
   useEffect(() => {
-    fetchCategory(categoryId);
+    dispatch(fetchCategories());
   }, []);
+
+  console.log(categories);
 
   return (
     <>
-      <div className="main-content create-category-page">
+      <div className="main-content create-user-page">
         <div className="d-flex align-items-center justify-content-between">
-          <h1 className="page-head">Edit Category</h1>
+          <h1 className="page-head">Create New Product</h1>
 
           <div className="d-flex align-items-center justify-content-between gap-3">
             <FancyCheckbox
@@ -131,17 +127,6 @@ function EditCategory() {
 
         <form onSubmit={handleSubmit}>
           <div className="row">
-            {categoryCover && (
-              <div className="col-xl-3 my-3">
-                <img
-                  src={`${process.env.REACT_APP_STORAGE_URL}/categories/${categoryCover}`}
-                  alt=""
-                  className="w-100 rounded"
-                />
-              </div>
-            )}
-          </div>
-          <div className="row">
             <div className="col-xl-6">
               <BeautifulInput
                 label={{ text: "Title", for: "title" }}
@@ -150,6 +135,18 @@ function EditCategory() {
                 placeholder="Title"
                 onChange={handleChange}
                 value={formData.title}
+                errors={errors}
+              />
+            </div>
+
+            <div className="col-xl-6">
+              <BeautifulInput
+                label={{ text: "Price", for: "price" }}
+                type="text"
+                id="price"
+                placeholder="Price"
+                onChange={handleChange}
+                value={formData.price}
                 errors={errors}
               />
             </div>
@@ -165,21 +162,38 @@ function EditCategory() {
                 errors={errors}
               />
             </div>
+
+            <div className="col-xl-12">
+              <BeautifulSelect
+                label={{ text: "Categories", for: "categories" }}
+                id="categories"
+                onChange={handleCategoriesChange}
+                multiple
+                errors={errors}
+              >
+                {categories?.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.title}
+                  </option>
+                ))}
+              </BeautifulSelect>
+            </div>
           </div>
 
           <div className="col-xl-12">
             <BeautifulUploader
-              label={{ text: "Cover", for: "cover" }}
-              id="cover"
+              label={{ text: "Images", for: "images" }}
+              id="images"
+              multiple
               onChange={handleUpload}
               uploadprogress={uploadProgress}
               errors={errors}
             />
           </div>
 
-          <button className="btn btn-success mt-2 d-flex align-items-center gap-2">
-            <FaUserEdit />
-            Update
+          <button className="btn btn-primary mt-2 d-flex align-items-center gap-2">
+            <FaPlusSquare />
+            Create
           </button>
         </form>
       </div>
@@ -187,4 +201,4 @@ function EditCategory() {
   );
 }
 
-export default EditCategory;
+export default CreateProduct;

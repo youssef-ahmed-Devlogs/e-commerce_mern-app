@@ -4,40 +4,25 @@ import { FaArrowLeft, FaPlusSquare } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import BeautifulInput from "../../components/BeautifulInput";
-import BeautifulSelect from "../../components/BeautifulSelect";
 import BeautifulUploader from "../../components/BeautifulUploader";
 import FancyCheckbox from "../../components/FancyCheckbox";
-import storeUserValidation from "../../helpers/validation/storeUserValidation";
+import Validator from "../../helpers/Validator";
+import { createCategory } from "../../store/categories/actions";
 import { handleBackAuto } from "../../store/settings/actions";
-import { createUser } from "../../store/users/actions";
 
 function CreateCategory() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    password: "",
-    passwordConfirm: "",
-    phone: "",
-    photo: "",
-    role: "user",
-    status: "1",
+    title: "",
+    description: "",
+    cover: "",
   });
 
   const resetState = () => {
     setFormData({
-      firstName: "",
-      lastName: "",
-      username: "",
-      email: "",
-      password: "",
-      passwordConfirm: "",
-      phone: "",
-      photo: "",
-      role: "user",
-      status: "1",
+      title: "",
+      description: "",
+      cover: "",
     });
   };
 
@@ -52,19 +37,38 @@ function CreateCategory() {
   };
 
   const handleUpload = (e) => {
-    const photo = e.target.files[0];
-    setFormData({ ...formData, photo });
+    const cover = e.target.files[0];
+    setFormData({ ...formData, cover });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Validation
-    const validatorErrors = storeUserValidation(formData);
+    const validator = new Validator(formData);
+    const validatorErrors = validator
+      .setValidation({
+        title: ["required", "min:2", "max:100"],
+        cover: ["image:png,jpeg,jpg", "size:2048"],
+      })
+      .setMessages({
+        title: {
+          required: "title is required.",
+          min: "title must be grater than 2 characters.",
+          max: "title must be less than 100 characters.",
+        },
+        cover: {
+          image: "Please provide a valid image (jpg, jpeg, png).",
+          size: "Max size is 2048KB.",
+        },
+      })
+      .prepare()
+      .getObjectErrors();
+
     setErrors(validatorErrors);
 
     if (Object.keys(validatorErrors).length === 0) {
-      dispatch(createUser(formData, { navigate, setUploadProgress }));
+      dispatch(createCategory(formData, { navigate, setUploadProgress }));
       resetState();
     }
   };
@@ -73,7 +77,7 @@ function CreateCategory() {
     <>
       <div className="main-content create-user-page">
         <div className="d-flex align-items-center justify-content-between">
-          <h1 className="page-head">Create New User</h1>
+          <h1 className="page-head">Create New Category</h1>
 
           <div className="d-flex align-items-center justify-content-between gap-3">
             <FancyCheckbox
@@ -83,7 +87,7 @@ function CreateCategory() {
               checked={backAfterSubmit}
             />
 
-            <Link to="/users" className="btn btn-primary">
+            <Link to="/categories" className="btn btn-primary">
               <FaArrowLeft className="me-1" />
               Back
             </Link>
@@ -94,126 +98,33 @@ function CreateCategory() {
           <div className="row">
             <div className="col-xl-6">
               <BeautifulInput
-                label={{ text: "First Name", for: "firstName" }}
+                label={{ text: "Title", for: "title" }}
                 type="text"
-                id="firstName"
-                placeholder="First Name"
+                id="title"
+                placeholder="Title"
                 onChange={handleChange}
-                value={formData.firstName}
+                value={formData.title}
                 errors={errors}
               />
             </div>
 
-            <div className="col-xl-6">
+            <div className="col-xl-12">
               <BeautifulInput
-                label={{ text: "Last Name", for: "lastName" }}
-                type="text"
-                id="lastName"
-                placeholder="Last Name"
+                label={{ text: "Description", for: "description" }}
+                type="textarea"
+                id="description"
+                placeholder="Description"
                 onChange={handleChange}
-                value={formData.lastName}
+                value={formData.description}
                 errors={errors}
               />
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulInput
-                label={{ text: "Username", for: "username" }}
-                type="text"
-                id="username"
-                placeholder="Username"
-                onChange={handleChange}
-                value={formData.username}
-                errors={errors}
-              />
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulInput
-                label={{ text: "Email", for: "email" }}
-                type="email"
-                id="email"
-                placeholder="Email"
-                onChange={handleChange}
-                value={formData.email}
-                errors={errors}
-              />
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulInput
-                label={{ text: "Phone", for: "phone" }}
-                type="text"
-                id="phone"
-                placeholder="Phone"
-                onChange={handleChange}
-                value={formData.phone}
-                errors={errors}
-              />
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulInput
-                label={{ text: "Password", for: "password" }}
-                type="password"
-                id="password"
-                placeholder="Password"
-                onChange={handleChange}
-                value={formData.password}
-                errors={errors}
-              />
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulInput
-                label={{ text: "Password Confirm", for: "passwordConfirm" }}
-                type="password"
-                id="passwordConfirm"
-                placeholder="Password Confirm"
-                onChange={handleChange}
-                value={formData.passwordConfirm}
-                errors={errors}
-              />
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulSelect
-                label={{ text: "Role", for: "role" }}
-                type="text"
-                id="role"
-                placeholder="Role"
-                onChange={handleChange}
-                value={formData.role}
-                errors={errors}
-              >
-                <option value="">Select Role</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </BeautifulSelect>
-            </div>
-
-            <div className="col-xl-6">
-              <BeautifulSelect
-                label={{ text: "Status", for: "status" }}
-                type="text"
-                id="status"
-                placeholder="Status"
-                onChange={handleChange}
-                value={formData.status}
-                errors={errors}
-              >
-                <option value="">Select Status</option>
-                <option value="1">Active</option>
-                <option value="2">Disabled</option>
-                <option value="3">Banned</option>
-              </BeautifulSelect>
             </div>
           </div>
 
           <div className="col-xl-12">
             <BeautifulUploader
-              label={{ text: "Photo", for: "photo" }}
-              id="photo"
+              label={{ text: "Cover", for: "cover" }}
+              id="cover"
               onChange={handleUpload}
               uploadprogress={uploadProgress}
               errors={errors}

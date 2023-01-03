@@ -489,7 +489,7 @@ thead th.active {
 }
 
 /* ============================== CREATE USER PAGE ============================== */
-.create-user-page form {
+.main-content form {
   width: 70%;
   margin: auto;
 }

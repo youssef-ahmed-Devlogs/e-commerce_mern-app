@@ -1,9 +1,9 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export const GET_CATEGORIES = "GET_CATEGORIES";
+export const GET_PRODUCTS = "GET_PRODUCTS";
 
-const URL = `${process.env.REACT_APP_API_URL}/categories`;
+const URL = `${process.env.REACT_APP_API_URL}/products`;
 
 const apiOptions = () => {
   const loggedInUser = localStorage.getItem("user")
@@ -21,42 +21,43 @@ const apiOptions = () => {
   };
 };
 
-export const getCategories = (categories) => {
+export const getProducts = (products) => {
   return {
-    type: GET_CATEGORIES,
-    payload: categories,
+    type: GET_PRODUCTS,
+    payload: products,
   };
 };
 
-export const fetchCategories = (queries = "") => {
+export const fetchProducts = (queries = "") => {
   return async (dispatch) => {
     try {
       const { data } = await axios.get(`${URL}?${queries}`, apiOptions());
 
-      dispatch(getCategories(data));
+      dispatch(getProducts(data));
     } catch (error) {
       console.log(error);
     }
   };
 };
 
-export const createCategory = (formData, options) => {
+export const createProduct = (formData, options) => {
   return async (dispatch) => {
     try {
       const { navigate, setUploadProgress } = options;
       const formDataObj = new FormData();
 
       for (let key in formData) {
-        if (formData[key] === "") {
-          continue;
-        }
         formDataObj.append(key, formData[key]);
+      }
+
+      if (!formData.images.length) {
+        formDataObj.delete("images");
       }
 
       const { data } = await axios.post(URL, formDataObj, {
         ...apiOptions(),
         onUploadProgress: (progressEvent) => {
-          if (formData.cover) {
+          if (formData.images.length) {
             const progressNow = Math.round(
               (progressEvent.loaded / progressEvent.total) * 100
             ); // (200 / 400 * 100) = 50%
@@ -72,14 +73,14 @@ export const createCategory = (formData, options) => {
         },
       });
 
-      toast.success(`Category ${data.data.title} created successfully`);
+      toast.success(`Product ${data.data.title} created successfully`);
 
       const siteSettings = localStorage.getItem("siteSettings")
         ? JSON.parse(localStorage.getItem("siteSettings"))
         : {};
 
       if (siteSettings && siteSettings.backAfterSubmit) {
-        navigate("/categories");
+        navigate("/products");
       }
     } catch (error) {
       if (
@@ -90,7 +91,9 @@ export const createCategory = (formData, options) => {
         toast.error(error.response.data.message);
       }
 
-      console.error("Error: createCategory action");
+      console.log(error.response.data.validationMessages);
+
+      console.error("Error: createProduct action");
     }
   };
 };
